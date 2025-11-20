@@ -1,30 +1,35 @@
-// src/app/api/auth/register/route.ts
+//src/app/api/auth/register/route.ts§
+
 import { NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebaseAdmin";
+import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { registerUserSchema } from "@/schemas/user";
 
-export async function POST(request: Request) {
-  const body = await request.json();
-
-  // Validate input using Zod
-  const parseResult = registerUserSchema.safeParse(body);
-  if (!parseResult.success) {
-    return NextResponse.json(
-      { message: "Validation failed", errors: parseResult.error.format() },
-      { status: 400 }
-    );
-  }
-
-  const { email, password } = parseResult.data;
-
+export async function POST(req: Request) {
   try {
-    const user = await adminAuth.createUser({ email, password });
+    const body = await req.json();
+    const parsed = registerUserSchema.parse(body);
+
+    // Create Firebase Auth user
+    const user = await adminAuth.createUser({
+      email: parsed.email,
+      password: parsed.password,
+    });
+
+    // Create Firestore document
+    await adminDb.collection("users").doc(user.uid).set({
+      email: parsed.email,
+      createdAt: new Date(),
+    });
 
     return NextResponse.json(
-      { message: "User registered successfully", uid: user.uid },
+      { message: "User registered", uid: user.uid },
       { status: 201 }
     );
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 400 });
+
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: err.message ?? "Registration failed" },
+      { status: 400 }
+    );
   }
 }
