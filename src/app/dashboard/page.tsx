@@ -1,9 +1,5 @@
-import React from 'react'
-
-const mainDash = () => {
-  return (
-    <div>so you're authorized lol</div>
-  )
+// src/app/dashboard/page.tsx
+export default function DashboardPage() {
+  return <div>so you're authorized lol</div>;
 }
 
-export default mainDash
