@@ -1,6 +1,7 @@
 // src/app/dashboard/layout.tsx
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import Sidebar from "@/components/Sidebar";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
@@ -9,6 +10,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!session) {
     redirect("/login");
   }
-
-  return <>{children}</>;
+  return (
+    <div className="flex">
+      <Sidebar />
+      <main className="flex-1 p-6">
+        {children}
+      </main>
+    </div>
+  );
 }
