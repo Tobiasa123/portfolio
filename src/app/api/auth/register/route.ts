@@ -1,5 +1,3 @@
-//src/app/api/auth/register/route.ts§
-
 import { NextResponse } from "next/server";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { registerUserSchema } from "@/schemas/user";
@@ -15,9 +13,15 @@ export async function POST(req: Request) {
       password: parsed.password,
     });
 
-    // Create Firestore document
+    // Set default role via Custom Claims
+    await adminAuth.setCustomUserClaims(user.uid, {
+      role: "user",
+    });
+
+    // Create Firestore record (optional)
     await adminDb.collection("users").doc(user.uid).set({
       email: parsed.email,
+      role: "user", // purely informational — NOT used for security
       createdAt: new Date(),
     });
 
