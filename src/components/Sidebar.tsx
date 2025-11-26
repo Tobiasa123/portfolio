@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Button } from "./Button";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -20,7 +20,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 h-screen bg-gray-900 text-white p-4 flex flex-col justify-between">
+    <aside className="w-64 h-screen p-4 flex flex-col justify-between bg-bg text-fg">
       <div>
         <h1 className="text-xl font-bold mb-6">Dashboard</h1>
 
@@ -31,8 +31,10 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block px-3 py-2 rounded-md transition ${
-                  active ? "bg-gray-700" : "hover:bg-gray-800"
+                className={`block px-3 py-2 rounded-md ${
+                  active
+                    ? "bg-bg/50" // slight overlay for active
+                    : "hover:bg-bg/20"
                 }`}
               >
                 {item.name}
@@ -42,7 +44,15 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      <Button text="Logout" onClick={handleLogout} />
+      <div className="flex flex-col gap-2">
+        <ThemeToggle />
+        <button
+          onClick={handleLogout}
+          className="px-3 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors duration-200"
+        >
+          Logout
+        </button>
+      </div>
     </aside>
   );
 }
