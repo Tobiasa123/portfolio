@@ -1,27 +1,62 @@
 @import "tailwindcss";
 
-/* Light theme */
+/* ----------------------------
+LIGHT THEME (default)
+----------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Page */
+--background: 255 255 255;
+--foreground: 23 23 23;
+
+/* Surfaces (cards, sidebar, navbar, panels) */
+--surface: 245 245 245;
+--surface-foreground: 23 23 23;
+
+/* UI elements */
+--border: 220 220 220;
+
+/* Radius + Fonts */
+--radius: 0.5rem;
+--font-sans: var(--font-geist-sans);
+--font-mono: var(--font-geist-mono);
 }
 
-/* Dark theme — toggled via next-themes `.dark` class */
+/* ----------------------------
+DARK THEME
+----------------------------- */
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+--background: 10 10 10;
+--foreground: 237 237 237;
+
+--surface: 20 20 20;
+--surface-foreground: 237 237 237;
+
+--border: 60 60 60;
 }
 
-/* Apply variables to body */
+/* ----------------------------
+GLOBAL BODY
+----------------------------- */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  transition: background-color 0.3s, color 0.3s; /* smooth theme transition */
+font-family: var(--font-sans), Arial, sans-serif;
+background-color: rgb(var(--background));
+color: rgb(var(--foreground));
 }
 
-/* Utility classes using CSS variables */
-.bg-bg { background-color: var(--background); }
-.text-fg { color: var(--foreground); }
+/* ----------------------------
+UTILITY CLASSES
+----------------------------- */
+
+/* Page background & text */
+.bg-bg { background-color: rgb(var(--background)); }
+.text-fg { color: rgb(var(--foreground)); }
+
+/* Surfaces (cards, sidebar, navbar, panels) */
+.bg-surface { background-color: rgb(var(--surface)); }
+.text-surface-fg { color: rgb(var(--surface-foreground)); }
+
+/* Borders */
+.border-border { border-color: rgb(var(--border)); }
+
+/* Radius */
+.rounded-base { border-radius: var(--radius); }

@@ -6,11 +6,7 @@ export const metadata = {
   description: "My personal site",
 };
 
-type RootLayoutProps = {
-  children: React.ReactNode;
-};
-
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
