@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { adminAuth } from "@/lib/firebaseAdmin";
+import { db } from "@/lib/firebase";
+import { doc, updateDoc } from "firebase/firestore";
 
 export async function POST(req: Request) {
   try {
@@ -23,6 +25,8 @@ export async function POST(req: Request) {
 
     // Remove admin claim (set role to 'user' or null)
     await adminAuth.setCustomUserClaims(uid, { role: "user" }); // or {} to remove completely
+
+    await updateDoc(doc(db, "users", uid), { role: "user" });
 
     return NextResponse.json({ success: true });
   } catch (e: any) {

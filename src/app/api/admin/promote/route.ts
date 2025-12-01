@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebaseAdmin";
+import { adminAuth} from "@/lib/firebaseAdmin";
+import { db } from "@/lib/firebase";
+import { doc, updateDoc } from "firebase/firestore";
 
 export async function POST(req: Request) {
   try {
@@ -23,6 +25,9 @@ export async function POST(req: Request) {
 
     // Add admin claim
     await adminAuth.setCustomUserClaims(uid, { role: "admin" });
+
+    //firebase role in firestore
+    await updateDoc(doc(db, "users", uid), { role: "admin" });
 
     return NextResponse.json({ success: true });
   } catch (e: any) {

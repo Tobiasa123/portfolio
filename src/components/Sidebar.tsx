@@ -1,18 +1,18 @@
 "use client";
-
+// Sidebar.tsx
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
+import { navItems } from "@/app/config/routes";
 
-export default function Sidebar() {
+export default function Sidebar({ role }: { role: string }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const navItems = [
-    { name: "Home", href: "/dashboard" },
-    { name: "Lorem", href: "/dashboard/lorem" },
-    { name: "Settings", href: "/dashboard/settings" },
-  ];
+  const filteredNav = navItems.filter(item => {
+    if (item.name === "Admin" && role !== "admin") return false;
+    return true;
+  });
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -25,16 +25,14 @@ export default function Sidebar() {
         <h1 className="text-xl font-bold mb-6">Dashboard</h1>
 
         <nav className="flex flex-col gap-2">
-          {navItems.map((item) => {
+          {filteredNav.map(item => {
             const active = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={`block px-3 py-2 rounded-base transition-colors ${
-                  active
-                    ? "bg-background/40"          // Active item stands out
-                    : "hover:bg-background/20"    // Subtle hover
+                  active ? "bg-background/40" : "hover:bg-background/20"
                 }`}
               >
                 {item.name}
@@ -46,7 +44,6 @@ export default function Sidebar() {
 
       <div className="flex flex-col gap-3">
         <ThemeToggle />
-
         <button
           onClick={handleLogout}
           className="px-3 py-2 rounded-base bg-red-600 text-white hover:bg-red-700 transition-colors"
