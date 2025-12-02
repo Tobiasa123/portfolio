@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebaseAdmin";
-import { db } from "@/lib/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { adminAuth, adminDb } from "@/lib/firebaseAdmin"; 
 
 export async function POST(req: Request) {
   try {
@@ -23,10 +21,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing uid" }, { status: 400 });
     }
 
-    // Remove admin claim (set role to 'user' or null)
-    await adminAuth.setCustomUserClaims(uid, { role: "user" }); // or {} to remove completely
+    // Remove custom claim
+    await adminAuth.setCustomUserClaims(uid, { role: "user" });
 
-    await updateDoc(doc(db, "users", uid), { role: "user" });
+
+    await adminDb.collection("users").doc(uid).update({
+      role: "user"
+    });
 
     return NextResponse.json({ success: true });
   } catch (e: any) {

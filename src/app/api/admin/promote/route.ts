@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { adminAuth} from "@/lib/firebaseAdmin";
-import { db } from "@/lib/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { adminAuth, adminDb } from "@/lib/firebaseAdmin"; // 🔥 adminDb added
 
 export async function POST(req: Request) {
   try {
@@ -26,8 +24,10 @@ export async function POST(req: Request) {
     // Add admin claim
     await adminAuth.setCustomUserClaims(uid, { role: "admin" });
 
-    //firebase role in firestore
-    await updateDoc(doc(db, "users", uid), { role: "admin" });
+    // Update Firestore SAFELY using Admin SDK
+    await adminDb.collection("users").doc(uid).update({
+      role: "admin"
+    });
 
     return NextResponse.json({ success: true });
   } catch (e: any) {
