@@ -1,7 +1,6 @@
-//src/app/api/admin/users/route.ts
-
+// src/app/api/admin/users/route.ts
 import { NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebaseAdmin";
+import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 
 export async function GET(req: Request) {
   try {
@@ -17,12 +16,18 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const list = await adminAuth.listUsers();
-    const users = list.users.map(u => ({
-      uid: u.uid,
-      email: u.email,
-      createdAt: u.metadata.creationTime,
-    }));
+    // Fetch users from Firestore
+    const snapshot = await adminDb.collection("users").get();
+
+    const users = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        uid: doc.id,
+        email: data.email,
+        role: data.role || "user",
+        createdAt: data.createdAt?.toDate?.() || null,
+      };
+    });
 
     return NextResponse.json(users);
   } catch (e: any) {

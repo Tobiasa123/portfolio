@@ -1,25 +1,12 @@
-// src/app/dashboard/layout.tsx
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
-import { adminAuth } from "@/lib/firebaseAdmin";
+import { requireAuth } from "@/lib/auth";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("__session")?.value;
+  const user = await requireAuth();
+  if (!user) redirect("/login");
 
-  if (!session) {
-    redirect("/login");
-  }
-
-  // Decode session cookie to get role
-  let role = "user";
-  try {
-    const decoded = await adminAuth.verifySessionCookie(session, true);
-    role = decoded.role || "user";
-  } catch {
-    redirect("/login");
-  }
+  const role = user.role ?? user.claims?.role ?? "user";
 
   return (
     <div className="flex">
