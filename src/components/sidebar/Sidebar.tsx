@@ -15,17 +15,16 @@ export default function Sidebar({ role }: SidebarProps) {
 
   return (
     <>
-      {/* Floating toggle button when sidebar is fully hidden */}
-      {collapsed && <SidebarToggleButton collapsed={collapsed} onClick={() => setCollapsed(c => !c)} />
-}
+      {/* Floating toggle button when sidebar is hidden */}
+      {collapsed && <SidebarToggleButton collapsed={collapsed} onClick={() => setCollapsed(false)} />}
 
-      {/* Main sidebar */}
+      {/* Full sidebar */}
       <aside
-        className={`flex flex-col bg-surface border-r border-border h-screen transition-all ${
-          collapsed ? "w-0 opacity-0" : "w-64 opacity-100"
-        }`}
+        className={`${
+          collapsed ? "hidden" : "flex"
+        } flex-col bg-surface border-r border-border h-screen w-64 transition-all`}
       >
-        <SidebarHeader collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
+        <SidebarHeader collapsed={collapsed} onToggle={() => setCollapsed(true)} />
         <SidebarNav collapsed={collapsed} role={role} />
         <SidebarFooter collapsed={collapsed} />
       </aside>

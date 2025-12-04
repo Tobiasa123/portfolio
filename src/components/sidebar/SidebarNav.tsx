@@ -5,13 +5,14 @@ import { usePathname } from "next/navigation";
 import { navItems } from "@/app/config/routes";
 
 interface SidebarNavProps {
-  role: string;
   collapsed: boolean;
+  role: string;
 }
 
 export default function SidebarNav({ role, collapsed }: SidebarNavProps) {
   const pathname = usePathname();
-  const filteredNav = navItems.filter(i => !(i.name === "Admin" && role !== "admin"));
+
+  const filteredNav = navItems.filter(item => !(item.name === "Admin" && role !== "admin"));
 
   return (
     <nav className="flex flex-col gap-2 px-2 flex-1">

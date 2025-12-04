@@ -1,7 +1,7 @@
 "use client";
 
-import ThemeToggle from "../ThemeToggle";
 import { useRouter } from "next/navigation";
+import ThemeToggle from "../ThemeToggle";
 
 interface SidebarFooterProps {
   collapsed: boolean;
@@ -18,14 +18,12 @@ export default function SidebarFooter({ collapsed }: SidebarFooterProps) {
   return (
     <div className="flex flex-col gap-3 mt-auto p-4">
       <ThemeToggle small={collapsed} />
-      {!collapsed && (
-        <button
-          onClick={logout}
-          className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-        >
-          Logout
-        </button>
-      )}
+      <button
+        onClick={logout}
+        className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+      >
+        {collapsed ? "⏻" : "Logout"}
+      </button>
     </div>
   );
 }
