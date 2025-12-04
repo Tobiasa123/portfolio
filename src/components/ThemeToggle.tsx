@@ -3,7 +3,11 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-export default function ThemeToggle() {
+interface ThemeToggleProps {
+  small?: boolean;
+}
+
+export default function ThemeToggle({ small = false }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -14,7 +18,11 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2 rounded-base bg-surface text-surface-fg border border-border transition-colors"
+      className={`
+        rounded-base border border-border transition-all
+        ${small ? "p-1 text-sm" : "p-2 text-base"}
+        bg-surface text-surface-fg
+      `}
       aria-label="Toggle Theme"
     >
       {theme === "dark" ? "🌞" : "🌙"}

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/sidebar/Sidebar";
 import { requireAuth } from "@/lib/auth";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -9,11 +9,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const role = user.role ?? user.claims?.role ?? "user";
 
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <Sidebar role={role} />
-      <main className="flex-1 p-6">
-        {children}
-      </main>
+      <main className="flex-1 p-6 overflow-auto">{children}</main>
     </div>
   );
 }
