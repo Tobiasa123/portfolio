@@ -12,7 +12,7 @@ export default function SidebarToggleButton({ collapsed, onClick }: SidebarToggl
     <Button
       onClick={onClick}
       text={collapsed ? "→" : "←"}
-      className="fixed top-4 left-4 z-50 p-2 rounded bg-gray-300 hover:bg-gray-400 shadow transition-all"
+      className="fixed top-4 left-4 z-50 p-2 rounded bg-surface text-surface-fg hover:bg-surface-hover "
     />
   );
 }

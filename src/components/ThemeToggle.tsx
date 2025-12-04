@@ -19,7 +19,7 @@ export default function ThemeToggle({ small = false }: ThemeToggleProps) {
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       className={`
-        rounded-base border border-border transition-all
+        rounded-base border border-border 
         ${small ? "p-1 text-sm" : "p-2 text-base"}
         bg-surface text-surface-fg
       `}
