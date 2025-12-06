@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SidebarHeader from "./SidebarHeader";
 import SidebarNav from "./SidebarNav";
 import SidebarFooter from "./SidebarFooter";
@@ -12,6 +12,21 @@ interface SidebarProps {
 
 export default function Sidebar({ role }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(true);
+
+  // Set initial state based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      const isDesktop = window.innerWidth >= 640; 
+      setCollapsed(!isDesktop);
+    };
+
+    // Set initial state
+    handleResize();
+
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <>
@@ -26,17 +41,17 @@ export default function Sidebar({ role }: SidebarProps) {
       {/* Backdrop for mobile only */}
       {!collapsed && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 sm:hidden transition-opacity duration-300"
+          className="fixed inset-0 bg-black/50 z-40 sm:hidden transition-opacity"
           onClick={() => setCollapsed(true)}
         />
       )}
 
       {/* Sidebar wrapper - conditionally reserves space on desktop */}
-      <div className={`${collapsed ? "" : "sm:w-64"} transition-all duration-300`}>
+      <div className={`${collapsed ? "" : "sm:w-64"} transition-all`}>
         <aside
           className={`
             flex flex-col h-screen w-64 bg-surface border-r border-border
-            transition-transform duration-300 ease-in-out z-50
+            transition-transform duration-200 ease-in-out z-50
             
             fixed top-0 left-0
             ${collapsed ? "-translate-x-64" : "translate-x-0"}
