@@ -11,11 +11,11 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ role }: SidebarProps) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   return (
     <>
-      {/* Floating toggle button when sidebar is hidden */}
+      {/* Floating toggle button - always shows when collapsed */}
       {collapsed && (
         <SidebarToggleButton
           collapsed={collapsed}
@@ -23,18 +23,33 @@ export default function Sidebar({ role }: SidebarProps) {
         />
       )}
 
-      {/* Sidebar slides in/out */}
-      <aside
-        className={`
-          flex flex-col h-screen w-64 bg-surface border-r border-border
-          transform transition-transform duration-300
-          ${collapsed ? "-translate-x-64" : "translate-x-0"}
-        `}
-      >
-        <SidebarHeader collapsed={collapsed} onToggle={() => setCollapsed(true)} />
-        <SidebarNav collapsed={collapsed} role={role} />
-        <SidebarFooter collapsed={collapsed} />
-      </aside>
+      {/* Backdrop for mobile only */}
+      {!collapsed && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 sm:hidden transition-opacity duration-300"
+          onClick={() => setCollapsed(true)}
+        />
+      )}
+
+      {/* Sidebar wrapper - conditionally reserves space on desktop */}
+      <div className={`${collapsed ? "" : "sm:w-64"} transition-all duration-300`}>
+        <aside
+          className={`
+            flex flex-col h-screen w-64 bg-surface border-r border-border
+            transition-transform duration-300 ease-in-out z-50
+            
+            fixed top-0 left-0
+            ${collapsed ? "-translate-x-64" : "translate-x-0"}
+          `}
+        >
+          <SidebarHeader
+            collapsed={false}
+            onToggle={() => setCollapsed(true)}
+          />
+          <SidebarNav collapsed={false} role={role} />
+          <SidebarFooter collapsed={false} />
+        </aside>
+      </div>
     </>
   );
 }
