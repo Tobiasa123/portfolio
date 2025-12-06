@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import SidebarHeader from "./SidebarHeader";
 import SidebarNav from "./SidebarNav";
 import SidebarFooter from "./SidebarFooter";
@@ -12,21 +12,18 @@ interface SidebarProps {
 
 export default function Sidebar({ role }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(true);
+  const userToggledRef = useRef(false);
 
-  // Set initial state based on screen size
+
   useEffect(() => {
-    const handleResize = () => {
-      const isDesktop = window.innerWidth >= 640; 
-      setCollapsed(!isDesktop);
-    };
-
-    // Set initial state
-    handleResize();
-
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const isDesktop = window.innerWidth >= 640;
+    setCollapsed(!isDesktop);
   }, []);
+
+  const handleToggle = (newState: boolean) => {
+    userToggledRef.current = true; // Mark as user-controlled
+    setCollapsed(newState);
+  };
 
   return (
     <>
@@ -34,7 +31,7 @@ export default function Sidebar({ role }: SidebarProps) {
       {collapsed && (
         <SidebarToggleButton
           collapsed={collapsed}
-          onClick={() => setCollapsed(false)}
+          onClick={() => handleToggle(false)}
         />
       )}
 
@@ -42,7 +39,7 @@ export default function Sidebar({ role }: SidebarProps) {
       {!collapsed && (
         <div
           className="fixed inset-0 bg-black/50 z-40 sm:hidden transition-opacity"
-          onClick={() => setCollapsed(true)}
+          onClick={() => handleToggle(true)}
         />
       )}
 
@@ -59,7 +56,7 @@ export default function Sidebar({ role }: SidebarProps) {
         >
           <SidebarHeader
             collapsed={false}
-            onToggle={() => setCollapsed(true)}
+            onToggle={() => handleToggle(true)}
           />
           <SidebarNav collapsed={false} role={role} />
           <SidebarFooter collapsed={false} />
