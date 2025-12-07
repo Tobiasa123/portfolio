@@ -5,6 +5,7 @@ interface ButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   className?: string;
+  type?: "button" | "submit" | "reset"; // <-- added type
 }
 
 export const Button = ({
@@ -12,9 +13,11 @@ export const Button = ({
   onClick,
   disabled = false,
   className = '',
+  type = "button", // default to "button"
 }: ButtonProps) => {
   return (
     <button
+      type={type} // <-- use type here
       onClick={onClick}
       disabled={disabled}
       className={`

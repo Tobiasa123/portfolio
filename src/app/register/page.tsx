@@ -1,11 +1,10 @@
 'use client';
 
-// src/app/register/page.tsx
 import { useState } from "react";
-import { Button } from "@/components/Button";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/Button";
 
-const RegisterPage = () => {
+export default function RegisterPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +31,6 @@ const RegisterPage = () => {
         return;
       }
 
-      // Registration successful, navigate to login
       router.push("/login");
     } catch (err: any) {
       setError(err.message || "Something went wrong");
@@ -41,49 +39,45 @@ const RegisterPage = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h1 className=" font-bold text-center">sign up</h1>
+    <div className="min-h-screen flex items-center justify-center bg-bg">
+      <div className="border border-border rounded-md p-8 max-w-md w-full shadow-sm flex flex-col gap-4">
+        <h1 className="text-2xl font-semibold text-fg text-center">Sign Up</h1>
 
-        <label htmlFor="email" className="block text-sm font-medium mb-1">
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            type="email"
+            name="email"
+            autoComplete="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground"
+          />
+
+          <input
+            type="password"
+            name="password"
+            autoComplete="new-password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground"
+          />
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
+          <Button
+            type="submit"
+            text={loading ? "Registering..." : "Sign Up"}
+          />
+        </form>
+
+        <Button
+          text="Already registered? Log in here"
+          onClick={() => router.push("/login")}
+          className="mt-2"
         />
-
-        <label htmlFor="password" className="block text-sm font-medium mb-1">
-          Password
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
-
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-
-        <button type="submit" disabled={loading} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4">
-          {loading ? "Registering..." : "Sign Up"}
-        </button>
-      </form>
-
-      <Button
-        text="already registered? log in here"
-        onClick={() => router.push("/login")}
-      />
+      </div>
     </div>
   );
-};
-
-export default RegisterPage;
+}
