@@ -8,10 +8,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const role = user.role ?? user.claims?.role ?? "user";
 
-  return (
-    <div className="flex h-screen">
+return (
+    <div className="grid grid-cols-[auto_1fr] h-screen bg-bg text-fg">
       <Sidebar role={role} />
-      <main className="flex-1 p-6 overflow-auto">{children}</main>
+      <main className="w-full max-w-6xl mx-auto my-6 p-6 border border-border rounded-md bg-surface">
+        {children}
+      </main>
     </div>
   );
 }
