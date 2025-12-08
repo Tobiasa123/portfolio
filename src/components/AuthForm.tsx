@@ -4,8 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/Button";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, GithubAuthProvider, signInWithPopup, getAuth } from "firebase/auth"; // <-- add here
 import { auth } from "@/lib/firebase";
+import { SiGithub } from "react-icons/si";
 
 interface AuthFormProps {
   title: string;
@@ -72,12 +73,42 @@ export function AuthForm({
     }
   };
 
+     //github handler (will cleanup later)
+    const handleGithubSignIn = async () => {
+    setError(null);
+    setLoading(true);
+    const provider = new GithubAuthProvider();
+
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const idToken = await user.getIdToken();
+
+        await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+        });
+
+        await fetch("/api/auth/oauth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: user.uid, email: user.email }),
+        });
+
+        router.push(redirectTo);
+        } catch (err: any) {
+            setError(err.message || "GitHub sign in failed");
+    } finally {
+        setLoading(false);
+    }
+};
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg">
       <div className="border border-border rounded-md p-8 max-w-md w-full shadow-sm flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold text-fg text-center">
-          {title}
-        </h1>
+        <h1 className="text-2xl font-semibold text-fg text-center">{title}</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
@@ -93,11 +124,7 @@ export function AuthForm({
           <input
             type="password"
             name="password"
-            autoComplete={
-              title.toLowerCase().includes("sign")
-                ? "new-password"
-                : "current-password"
-            }
+            autoComplete={title.toLowerCase().includes("sign") ? "new-password" : "current-password"}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -113,12 +140,21 @@ export function AuthForm({
           />
         </form>
 
+        {/* Add GitHub button */}
+            <Button
+            text="Continue with GitHub"
+            onClick={handleGithubSignIn}
+            disabled={loading}
+            className="flex items-center justify-center gap-2 bg-black text-white hover:brightness-90"
+            >
+            <SiGithub />
+            Continue with GitHub
+            </Button>
+
+
         {bottomLink && (
           <div className="text-center mt-2">
-            <Link
-              href={bottomLink.href}
-              className="text-sm text-surface-foreground hover:underline"
-            >
+            <Link href={bottomLink.href} className="text-sm text-surface-foreground hover:underline">
               {bottomLink.label}
             </Link>
           </div>
