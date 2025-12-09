@@ -1,7 +1,5 @@
 "use client";
 
-//src/app/dashboard/admin/users/UsersClient.tsx
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/Button";
 
@@ -9,6 +7,7 @@ interface User {
   uid: string;
   email: string;
   role: string;
+  status: "active" | "suspended"; 
   createdAt: string;
 }
 
@@ -68,11 +67,12 @@ function UserItem({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleAction = async (action: "promote" | "demote") => {
+  const handleAction = async (action: "promote" | "demote" | "suspend" | "unsuspend") => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/${action}`, {
+      let endpoint = `/api/admin/users/${action}`;
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid: user.uid }),
@@ -82,9 +82,26 @@ function UserItem({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Action failed");
 
-      const updatedUser: User = data.user ?? { ...user, role: action === "promote" ? "admin" : "user" };
+      // Update local state
+      let updatedUser: User = { ...user };
+
+      switch (action) {
+        case "promote":
+          updatedUser.role = "admin";
+          break;
+        case "demote":
+          updatedUser.role = "user";
+          break;
+        case "suspend":
+          updatedUser.status = "suspended";
+          break;
+        case "unsuspend":
+          updatedUser.status = "active";
+          break;
+      }
+
       onUpdate?.(updatedUser);
-      alert(`${action === "promote" ? "Promoted" : "Demoted"} ${user.email}`);
+      alert(`${action.charAt(0).toUpperCase() + action.slice(1)}d ${user.email}`);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -94,12 +111,35 @@ function UserItem({
 
   return (
     <li className="p-3 border rounded flex flex-col gap-2">
-      <div><strong>{user.email}</strong> ({user.role})</div>
+      <div>
+        <strong>{user.email}</strong> ({user.role}) — <em>{user.status}</em>
+      </div>
       <div>UID: {user.uid}</div>
       <div>Created: {user.createdAt}</div>
-      <div className="flex gap-2 mt-2">
-        <Button text="Promote" onClick={() => handleAction("promote")} disabled={loading || user.role === "admin"} />
-        <Button text="Demote" onClick={() => handleAction("demote")} disabled={loading || user.role === "user"} />
+      <div className="flex gap-2 mt-2 flex-wrap">
+        <Button
+          text="Promote"
+          onClick={() => handleAction("promote")}
+          disabled={loading || user.role === "admin"}
+        />
+        <Button
+          text="Demote"
+          onClick={() => handleAction("demote")}
+          disabled={loading || user.role === "user"}
+        />
+        {user.status === "active" ? (
+          <Button
+            text="Suspend"
+            onClick={() => handleAction("suspend")}
+            disabled={loading}
+          />
+        ) : (
+          <Button
+            text="Unsuspend"
+            onClick={() => handleAction("unsuspend")}
+            disabled={loading}
+          />
+        )}
       </div>
       {error && <div className="text-red-500 mt-1">{error}</div>}
     </li>

@@ -11,3 +11,12 @@ export const registerUserSchema = z.object({
 
 // Optional: type inferred from Zod schema
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
+
+// Firestore user type
+export type User = {
+  uid: string;
+  email: string;
+  role: "user" | "admin";
+  status: "active" | "suspended"; // 👈 added
+  createdAt: Date | null;
+};

@@ -25,6 +25,7 @@ export async function GET(req: Request) {
         uid: doc.id,
         email: data.email,
         role: data.role || "user",
+        status: data.status || "active", 
         createdAt: data.createdAt?.toDate?.() || null,
       };
     });

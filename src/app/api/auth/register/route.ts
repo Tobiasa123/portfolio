@@ -16,12 +16,14 @@ export async function POST(req: Request) {
     // Set default role via Custom Claims
     await adminAuth.setCustomUserClaims(user.uid, {
       role: "user",
+      suspended: false,
     });
 
-    // Create Firestore record (optional)
+    // Create Firestore record
     await adminDb.collection("users").doc(user.uid).set({
       email: parsed.email,
-      role: "user", // purely informational — NOT used for security
+      role: "user",
+      status: "active",
       createdAt: new Date(),
     });
 
@@ -29,7 +31,6 @@ export async function POST(req: Request) {
       { message: "User registered", uid: user.uid },
       { status: 201 }
     );
-
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message ?? "Registration failed" },
