@@ -60,3 +60,14 @@ UTILITY CLASSES
 
 /* Radius */
 .rounded-base { border-radius: var(--radius); }
+
+/* Chat message colors */
+.chat-user {
+  background-color: rgb(var(--surface-foreground) / 0.1);
+  color: rgb(var(--surface-foreground));
+}
+
+.chat-admin {
+   background-color: rgb(var(--surface-foreground) / 0.3); 
+  color: rgb(var(--surface-fg));
+}
