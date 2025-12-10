@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/Button";
 
@@ -25,6 +23,13 @@ export default function ChatsClient() {
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
+
+  // Scroll helper function
+  const scrollToBottom = () => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  };
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -50,10 +55,9 @@ export default function ChatsClient() {
     fetchChats();
   }, []);
 
-
+  // Scroll when messages change or user switches conversation
   useEffect(() => {
-    if (!messagesRef.current) return;
-    messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    scrollToBottom();
   }, [selectedUserId, conversations]);
 
   const currentChat = conversations.find((c) => c.userId === selectedUserId) ?? null;
@@ -92,6 +96,9 @@ export default function ChatsClient() {
       );
 
       setText("");
+      
+      // Scroll after state update
+      setTimeout(scrollToBottom, 0);
     } catch (err: any) {
       alert(err.message || "Send failed");
     } finally {
@@ -132,12 +139,12 @@ export default function ChatsClient() {
       </div>
 
       {/* Chat window */}
-      <div className="bg-surface border-border border rounded-base flex flex-col">
+      <div className="bg-surface border-border border rounded-base flex flex-col max-h-[600px]">
         {!currentChat ? (
           <div className="m-auto text-surface-fg/70">Select a conversation</div>
         ) : (
           <>
-            <div ref={messagesRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+            <div ref={messagesRef} className="flex-1 overflow-y-auto p-4 space-y-3 max-h-[500px]">
               {currentChat.messages.map((m) => {
                 const isAdmin = m.sender === "admin";
                 const time = new Date(m.timestamp).toLocaleTimeString();
