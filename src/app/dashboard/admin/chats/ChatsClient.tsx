@@ -55,7 +55,6 @@ export default function ChatsClient() {
     fetchChats();
   }, []);
 
-  // Scroll when messages change or user switches conversation
   useEffect(() => {
     scrollToBottom();
   }, [selectedUserId, conversations]);
@@ -96,8 +95,6 @@ export default function ChatsClient() {
       );
 
       setText("");
-      
-      // Scroll after state update
       setTimeout(scrollToBottom, 0);
     } catch (err: any) {
       alert(err.message || "Send failed");
@@ -139,7 +136,7 @@ export default function ChatsClient() {
       </div>
 
       {/* Chat window */}
-      <div className="bg-surface border-border border rounded-base flex flex-col max-h-[600px]">
+      <div className="bg-surface border-border border rounded-base flex flex-col max-h-[600px] min-w-0">
         {!currentChat ? (
           <div className="m-auto text-surface-fg/70">Select a conversation</div>
         ) : (
