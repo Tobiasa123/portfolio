@@ -7,6 +7,7 @@ import { Button } from "@/components/Button";
 import { signInWithEmailAndPassword, GithubAuthProvider, signInWithPopup, getAuth } from "firebase/auth"; // <-- add here
 import { auth } from "@/lib/firebase";
 import { SiGithub } from "react-icons/si";
+import { GlassCard } from "./ui/GlassCard";
 
 interface AuthFormProps {
   title: string;
@@ -106,60 +107,60 @@ export function AuthForm({
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg">
-      <div className="border border-border rounded-md p-8 max-w-md w-full shadow-sm flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold text-fg text-center">{title}</h1>
+   <div className="min-h-screen flex items-center justify-center bg-gradient-primary">
+  <GlassCard className="flex flex-col gap-4">
+    <h1 className="text-2xl font-semibold text-fg text-center">{title}</h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="email"
-            name="email"
-            autoComplete="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground"
-          />
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <input
+        type="email"
+        name="email"
+        autoComplete="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground bg-white/10 dark:bg-black/20"
+      />
 
-          <input
-            type="password"
-            name="password"
-            autoComplete={title.toLowerCase().includes("sign") ? "new-password" : "current-password"}
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground"
-          />
+      <input
+        type="password"
+        name="password"
+        autoComplete={title.toLowerCase().includes("sign") ? "new-password" : "current-password"}
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground bg-white/10 dark:bg-black/20"
+      />
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <Button
-            type="submit"
-            text={loading ? loadingLabel : submitLabel}
-            disabled={loading}
-          />
-        </form>
+      <Button
+        type="submit"
+        text={loading ? loadingLabel : submitLabel}
+        disabled={loading}
+      />
+    </form>
 
-        {/* Add GitHub button */}
-            <Button
-            text="Continue with GitHub"
-            onClick={handleGithubSignIn}
-            disabled={loading}
-            className="flex items-center justify-center gap-2 bg-black text-white hover:brightness-90"
-            >
-            <SiGithub />
-            Continue with GitHub
-            </Button>
+    <Button
+      text="Continue with GitHub"
+      onClick={handleGithubSignIn}
+      disabled={loading}
+      className="flex items-center justify-center gap-2 bg-black text-white hover:brightness-90"
+    >
+      <SiGithub />
+      Continue with GitHub
+    </Button>
 
-
-        {bottomLink && (
-          <div className="text-center mt-2">
-            <Link href={bottomLink.href} className="text-sm text-surface-foreground hover:underline">
-              {bottomLink.label}
-            </Link>
-          </div>
-        )}
+    {bottomLink && (
+      <div className="text-center mt-2">
+        <Link href={bottomLink.href} className="text-sm text-surface-foreground hover:underline">
+          {bottomLink.label}
+        </Link>
       </div>
-    </div>
+    )}
+  </GlassCard>
+</div>
+
+
   );
 }
