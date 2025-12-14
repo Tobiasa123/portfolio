@@ -1,5 +1,7 @@
+
+//src/app/(public)/[locale]/register/page.tsx
+
 "use client";
-//src/app/(public)/register/page.tsx
 import { AuthForm } from "@/components/AuthForm";
 
 export default function RegisterPage() {
@@ -17,4 +19,3 @@ export default function RegisterPage() {
     />
   );
 }
-

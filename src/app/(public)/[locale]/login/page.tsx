@@ -1,6 +1,5 @@
+//src/app/(public)/[locale]/login/page.tsx
 "use client";
-//src/app/%28public%29/login/page.tsx
-
 import { AuthForm } from "@/components/AuthForm";
 
 export default function LoginPage() {
