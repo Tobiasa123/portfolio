@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { FiSun, FiMoon } from "react-icons/fi";
 
 interface ThemeToggleProps {
   small?: boolean;
@@ -11,7 +12,6 @@ export default function ThemeToggle({ small = false }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Prevent hydration mismatch
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
@@ -20,12 +20,12 @@ export default function ThemeToggle({ small = false }: ThemeToggleProps) {
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       className={`
         rounded-base border border-border 
-        ${small ? "p-1 text-sm" : "p-2 text-base"}
-        bg-surface text-surface-fg
+        ${small ? "p-1" : "p-2"} 
+        bg-surface text-surface-fg flex items-center justify-center
       `}
       aria-label="Toggle Theme"
     >
-      {theme === "dark" ? "🌞" : "🌙"}
+      {theme === "dark" ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
     </button>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-
+//src/app/(public)/register/page.tsx
 import { AuthForm } from "@/components/AuthForm";
 
 export default function RegisterPage() {
