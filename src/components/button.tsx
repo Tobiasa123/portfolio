@@ -21,6 +21,7 @@ export const Button = ({
       onClick={onClick}
       disabled={disabled}
       className={`
+        whitespace-nowrap
         rounded-base px-4 py-2 border border-border
         bg-surface text-surface-fg
         transition-colors duration-200
@@ -33,4 +34,3 @@ export const Button = ({
     </button>
   );
 };
-
