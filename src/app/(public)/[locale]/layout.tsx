@@ -6,15 +6,15 @@ import '../../globals.css';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>; // Changed to Promise
+  params: Promise<{ locale: string }>; 
 }
 
 export default async function PublicLayout({ 
   children, 
   params 
 }: PublicLayoutProps) {
-  const { locale } = await params; // Await the params
-  const messages = await getMessages({ locale }); // Pass locale to getMessages
+  const { locale } = await params; 
+  const messages = await getMessages({ locale }); 
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>

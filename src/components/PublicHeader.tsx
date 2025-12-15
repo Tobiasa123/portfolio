@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Button } from "@/components/Button";
 import ThemeToggle from "@/components/ThemeToggle";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export function PublicHeader() {
   return (
@@ -26,16 +27,18 @@ export function PublicHeader() {
           </Link>
         </nav>
 
-        {/* Auth Buttons + Theme Toggle */}
+        {/* Actions */}
         <div className="col-start-3 justify-self-end flex items-center gap-3">
+          <LanguageSwitcher />
           <ThemeToggle />
           <Link href="/login">
-            <Button text="Log in" />
+            <Button>Log in</Button>
           </Link>
           <Link href="/register">
-            <Button text="Sign up" />
+            <Button>Sign up</Button>
           </Link>
         </div>
+
       </div>
     </header>
   );
