@@ -29,7 +29,7 @@ export default function Home() {
           />
 
           <Button
-            text="Continue as Guest"
+            text={t("guest")}
             onClick={() => router.push("/")}
           />
         </GlassCard>

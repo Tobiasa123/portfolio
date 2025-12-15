@@ -1,11 +1,14 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/Button";
 import ThemeToggle from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export function PublicHeader() {
+  const t = useTranslations("public"); // matches your JSON key
+
   return (
     <header className="fixed top-0 left-0 w-full z-50 border-b border-border bg-bg">
       <div className="mx-auto max-w-6xl grid grid-cols-3 items-center gap-6 px-6 py-3">
@@ -13,17 +16,17 @@ export function PublicHeader() {
         {/* Logo */}
         <div className="col-start-1">
           <Link href="/" className="text-lg font-semibold">
-            logo maybe
+            {t("logo")}
           </Link>
         </div>
 
         {/* Navigation */}
         <nav className="col-start-2 justify-self-center flex gap-6">
           <Link href="/blog" className="text-sm hover:underline">
-            Blog
+            {t("blog")}
           </Link>
           <Link href="/docs" className="text-sm hover:underline">
-            Docs
+            {t("docs")}
           </Link>
         </nav>
 
@@ -32,10 +35,10 @@ export function PublicHeader() {
           <LanguageSwitcher />
           <ThemeToggle />
           <Link href="/login">
-            <Button>Log in</Button>
+            <Button>{t("login")}</Button>
           </Link>
           <Link href="/register">
-            <Button>Sign up</Button>
+            <Button>{t("signup")}</Button>
           </Link>
         </div>
 
