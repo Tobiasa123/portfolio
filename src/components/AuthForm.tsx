@@ -3,33 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/Button";
-import { signInWithEmailAndPassword, GithubAuthProvider, signInWithPopup, getAuth } from "firebase/auth"; // <-- add here
+import { signInWithEmailAndPassword, GithubAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { SiGithub } from "react-icons/si";
 import { GlassCard } from "./ui/GlassCard";
 
 interface AuthFormProps {
-  title: string;
-  submitLabel: string;
-  loadingLabel: string;
-  endpoint: string;
+  type: "login" | "register";
   redirectTo: string;
-  bottomLink?: {
-    label: string;
-    href: string;
-  };
 }
 
-export function AuthForm({
-  title,
-  submitLabel,
-  loadingLabel,
-  endpoint,
-  redirectTo,
-  bottomLink,
-}: AuthFormProps) {
+export function AuthForm({ type, redirectTo }: AuthFormProps) {
+  const tPublic = useTranslations("public");       
+  const tAuth = useTranslations("public.auth");   
   const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -42,18 +32,15 @@ export function AuthForm({
 
     try {
       let body: any = {};
-
-      if (endpoint === "/api/auth/login") {
+      if (type === "login") {
         const cred = await signInWithEmailAndPassword(auth, email, password);
         const idToken = await cred.user.getIdToken();
         body = { idToken };
-      }
-
-      if (endpoint === "/api/auth/register") {
+      } else {
         body = { email, password };
       }
 
-      const res = await fetch(endpoint, {
+      const res = await fetch(`/api/auth/${type}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -74,93 +61,101 @@ export function AuthForm({
     }
   };
 
-     //github handler (will cleanup later)
-    const handleGithubSignIn = async () => {
+  const handleGithubSignIn = async () => {
     setError(null);
     setLoading(true);
     const provider = new GithubAuthProvider();
 
     try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        const idToken = await user.getIdToken();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
 
-        await fetch("/api/auth/login", {
+      await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),
-        });
+      });
 
-        await fetch("/api/auth/oauth/register", {
+      await fetch("/api/auth/oauth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid: user.uid, email: user.email }),
-        });
+      });
 
-        router.push(redirectTo);
-        } catch (err: any) {
-            setError(err.message || "GitHub sign in failed");
+      router.push(redirectTo);
+    } catch (err: any) {
+      setError(err.message || "GitHub sign in failed");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
-
+  };
 
   return (
-   <div className="min-h-screen flex items-center justify-center bg-gradient-primary">
-  <GlassCard className="flex flex-col gap-4">
-    <h1 className="text-2xl font-semibold text-fg text-center">{title}</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-primary">
+      <GlassCard className="flex flex-col gap-4">
+        {/* Form Title */}
+        <h1 className="text-2xl font-semibold text-fg text-center">
+          {type === "login" ? tPublic("login") : tPublic("signup")}
+        </h1>
 
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <input
-        type="email"
-        name="email"
-        autoComplete="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground bg-white/10 dark:bg-black/20"
-      />
+        {/* Form Fields */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            type="email"
+            name="email"                        
+            autoComplete="email"                
+            placeholder={tAuth("email")}
+            title={tAuth("email")}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground bg-white/10 dark:bg-black/20"
+          />
 
-      <input
-        type="password"
-        name="password"
-        autoComplete={title.toLowerCase().includes("sign") ? "new-password" : "current-password"}
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground bg-white/10 dark:bg-black/20"
-      />
+          <input
+            type="password"
+            name="password"                     // required for browser autofill
+            autoComplete={type === "login" ? "current-password" : "new-password"} // autofill
+            placeholder={tAuth("password")}
+            title={tAuth("password")}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground bg-white/10 dark:bg-black/20"
+          />
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      <Button
-        type="submit"
-        text={loading ? loadingLabel : submitLabel}
-        disabled={loading}
-      />
-    </form>
+          <Button type="submit" disabled={loading}>
+            {loading
+              ? type === "login"
+                ? tAuth("loggingIn")
+                : tAuth("registering")
+              : type === "login"
+              ? tPublic("login")
+              : tPublic("signup")}
+          </Button>
+        </form>
 
-    <Button
-      text="Continue with GitHub"
-      onClick={handleGithubSignIn}
-      disabled={loading}
-      className="flex items-center justify-center gap-2 bg-black text-white hover:brightness-90"
-    >
-      <SiGithub />
-      Continue with GitHub
-    </Button>
+        {/* GitHub OAuth */}
+        <Button
+          onClick={handleGithubSignIn}
+          disabled={loading}
+          className="flex items-center justify-center gap-2 bg-black text-white hover:brightness-90"
+        >
+          <SiGithub />
+          {tAuth("continueWithGithub")}
+        </Button>
 
-    {bottomLink && (
-      <div className="text-center mt-2">
-        <Link href={bottomLink.href} className="text-sm text-surface-foreground hover:underline">
-          {bottomLink.label}
-        </Link>
-      </div>
-    )}
-  </GlassCard>
-</div>
-
-
+        {/* Bottom Link */}
+        <div className="text-center mt-2">
+          <Link
+            href={type === "login" ? "/register" : "/login"}
+            className="text-sm text-surface-foreground hover:underline"
+          >
+            {type === "login" ? tAuth("notRegistered") : tAuth("alreadyRegistered")}
+          </Link>
+        </div>
+      </GlassCard>
+    </div>
   );
 }

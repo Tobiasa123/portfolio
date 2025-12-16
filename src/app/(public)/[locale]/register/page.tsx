@@ -1,0 +1,8 @@
+
+// src/app/(public)/[locale]/register/page.tsx
+"use client";
+import { AuthForm } from "@/components/AuthForm";
+
+export default function RegisterPage() {
+  return <AuthForm type="register" redirectTo="/login" />;
+}
