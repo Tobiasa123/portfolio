@@ -8,8 +8,19 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale = 'en';
   }
 
+  const publicMessages = (
+    await import(`./src/messages/${locale}/public.json`)
+  ).default;
+
+  const authorizedMessages = (
+    await import(`./src/messages/${locale}/authorized.json`)
+  ).default;
+
   return {
     locale,
-    messages: (await import(`./src/messages/${locale}/public.json`)).default
+    messages: {
+      ...publicMessages,
+      ...authorizedMessages
+    }
   };
 });
