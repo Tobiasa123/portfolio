@@ -1,7 +1,9 @@
+// src/components/sidebar/SidebarNav.tsx
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { navItems } from "@/app/config/routes";
 
 interface SidebarNavProps {
@@ -11,15 +13,17 @@ interface SidebarNavProps {
 
 export default function SidebarNav({ role, collapsed }: SidebarNavProps) {
   const pathname = usePathname();
+  const t = useTranslations("sidebar"); // picks authorized.json sidebar namespace
 
-  const filteredNav = navItems.filter(item => !(item.name === "Admin" && role !== "admin"));
+  // filter admin if not admin
+  const filteredNav = navItems.filter(item => !(item.key === "admin" && role !== "admin"));
 
   return (
     <nav className="flex flex-col gap-2 px-2 flex-1 mt-6">
       {filteredNav.map(item => {
         const active = pathname === item.href;
         return (
-        <Link
+          <Link
             key={item.href}
             href={item.href}
             className={`
@@ -31,8 +35,8 @@ export default function SidebarNav({ role, collapsed }: SidebarNavProps) {
                 : "hover:brightness-90 active:brightness-75"}
             `}
           >
-          {collapsed ? item.name[0] : item.name}
-        </Link>
+            {collapsed ? t(item.key)[0] : t(item.key)} 
+          </Link>
         );
       })}
     </nav>
