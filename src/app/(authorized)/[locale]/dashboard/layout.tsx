@@ -1,7 +1,7 @@
 // src/app/(authorized)/[locale]/dashboard/layout.tsx
 import { redirect } from "next/navigation";
 import Sidebar from "@/components/sidebar/Sidebar";
-import ChatWidget from "@/components/ChatWidget/ChatWidget";
+import ChatLauncher from "@/components/ChatLauncher"; // use launcher
 import { requireAuth } from "@/lib/auth";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -28,7 +28,9 @@ export default async function DashboardLayout({ children, params }: DashboardLay
         <Sidebar role={role} />
         <main className="w-full max-w-6xl mx-auto my-6 p-6 border border-border rounded-md bg-surface relative">
           {children}
-          {!isAdmin && <ChatWidget userId={user.uid} />}
+
+          {/* only show chat for non-admins via launcher */}
+          {!isAdmin && <ChatLauncher userId={user.uid} />}
         </main>
       </div>
     </NextIntlClientProvider>
