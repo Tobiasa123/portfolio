@@ -20,7 +20,7 @@ export default function Home() {
           <BlogSection limit={1} />
         </GlassCard>
 
-        <GlassCard className="flex flex-col gap-4">
+        <GlassCard className="flex flex-col gap-4 w-full">
           <h1 className="text-2xl font-semibold">{t("title")}</h1>
 
           <Button

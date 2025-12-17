@@ -122,6 +122,5 @@ UTILITY CLASSES
   backdrop-filter: blur(2.5rem);
   border-radius: var(--radius);
   padding: 2rem;
-  max-width: 28rem;
-  width: 100%;
+
 }
