@@ -24,7 +24,7 @@ export default function ChatWidget({ userId, onClose }: ChatWidgetProps) {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 w-80 max-w-full border rounded-base shadow-lg bg-surface text-surface-fg overflow-hidden">
+    <div className="fixed bottom-5 right-5 w-80 max-w-full border border-border rounded-base shadow-lg bg-surface text-surface-fg overflow-hidden">
       {/* Header */}
       <div className="flex justify-between items-center px-3 py-2 border-b border-border">
         <span className="font-semibold">Chat with us</span>

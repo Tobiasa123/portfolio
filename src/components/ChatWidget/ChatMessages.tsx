@@ -52,7 +52,7 @@ export default function ChatMessages({ userId }: ChatMessagesProps) {
   return (
     <div
       ref={messagesRef}
-      className="h-[300px] overflow-y-auto p-2 flex flex-col gap-2 border border-border rounded-base"
+      className="h-[300px] overflow-y-auto p-2 flex flex-col gap-2 rounded-base"
     >
       {messages.map((m) => {
         const timestamp: Date =
