@@ -18,7 +18,11 @@ export function GlassCard({ children, className = "" }: GlassCardProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
+      transition={{ 
+        type: "spring",
+        stiffness: 300,
+        damping: 20
+      }}
       className={`glass-card ${className}`}
     >
       {children}
