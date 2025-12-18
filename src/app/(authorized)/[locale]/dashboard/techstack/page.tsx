@@ -21,7 +21,7 @@ export default function TechstackPage() {
     <div className="flex flex-col items-center space-y-8">
       <h1 className="text-3xl font-bold text-center">{t("title")}</h1>
 
-      <section className="flex flex-col items-center">
+      <section className="flex flex-col items-center ">
         <h2 className="mt-4 font-semibold text-center">Frontend</h2>
         <div className="flex flex-wrap justify-center gap-4 mt-2">
           <TechItem icon={SiReact} label="React" color="text-blue-500" />

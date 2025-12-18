@@ -24,9 +24,9 @@ export default async function DashboardLayout({ children, params }: DashboardLay
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <div className="grid grid-cols-[auto_1fr] h-screen bg-bg text-fg">
+      <div className="grid grid-cols-[auto_1fr] h-screen bg-pink-00 text-fg">
         <Sidebar role={role} />
-        <main className="w-full max-w-6xl mx-auto my-6 p-6 border border-border rounded-md bg-surface relative">
+        <main className="w-full max-w-6xl mx-auto my-6 p-6 border border-border rounded-md  relative">
           {children}
 
           {/* only show chat for non-admins via launcher */}

@@ -16,15 +16,9 @@ LIGHT THEME (default)
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Regular cards */
-  --card-bg: rgba(255, 255, 255, 0.15);
-  --card-border: rgba(255, 255, 255, 0.3);
-  --card-shadow: none;
-
   /* 🧊 Glass-only tokens */
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.25);
-  /* --glass-shadow: 0 8px 30px rgba(0, 0, 0, 0.45); */
 
   /* Gradients */
   --gradient-primary: linear-gradient(
@@ -52,15 +46,8 @@ DARK THEME
 
   --border: 60 60 60;
 
-  /* Regular cards */
-  --card-bg: rgba(0, 0, 0, 0.2);
-  --card-border: rgba(0, 0, 0, 0.4);
-  --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-
-  /* 🧊 Glass-only tokens */
   --glass-bg: rgba(0, 0, 0, 0.12);
   --glass-border: rgba(255, 255, 255, 0.08);
-  /* --glass-shadow: 0 8px 30px rgba(0, 0, 0, 0.45); */
 
   /* Gradients */
   --gradient-primary: linear-gradient(
@@ -113,14 +100,22 @@ UTILITY CLASSES
 .bg-gradient-accent { background: var(--gradient-accent); }
 
 /* ----------------------------
-🧊 GLASS CARD
+ GLASS CARD
 ----------------------------- */
 .glass-card {
   background-color: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  /* box-shadow: var(--glass-shadow); */
   backdrop-filter: blur(2.5rem);
   border-radius: var(--radius);
   padding: 2rem;
+}
 
+/* ----------------------------
+ REGULAR CARD
+----------------------------- */
+.card {
+  background-color: rgb(var(--surface));
+  border: 1px solid rgb(var(--border));
+  border-radius: var(--radius);
+  padding: 2rem;
 }
