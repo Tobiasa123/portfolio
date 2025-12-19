@@ -1,8 +1,35 @@
-
 // src/app/config/routes.ts
+import {
+  FiHome,
+  FiLayers,
+  FiSettings,
+  FiShield,
+} from "react-icons/fi";
+
 export const navItems = [
-  { name: "Home", href: "/dashboard" },
-  { name: "Lorem", href: "/dashboard/lorem" },
-  { name: "Settings", href: "/dashboard/settings" },
-  { name: "Admin", href: "/dashboard/admin" },
+  {
+    key: "home",
+    href: "/dashboard",
+    label: "Home",
+    icon: FiHome,
+  },
+  {
+    key: "techstack",
+    href: "/dashboard/techstack",
+    label: "Tech Stack",
+    icon: FiLayers,
+  },
+  {
+    key: "settings",
+    href: "/dashboard/settings",
+    label: "Settings",
+    icon: FiSettings,
+  },
+  {
+    key: "admin",
+    href: "/dashboard/admin",
+    label: "Admin",
+    icon: FiShield,
+    role: "admin",
+  },
 ];

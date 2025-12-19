@@ -33,7 +33,6 @@ export const config = {
   matcher: [
     '/',
     '/(en|sv)/:path*',
-    // Exclude dashboard, api, and other protected routes
-    '/((?!api|_next|_vercel|dashboard|admin|.*\\..*).*)'
+    '/((?!api|_next|_vercel|.*\\..*).*)'
   ]
 };

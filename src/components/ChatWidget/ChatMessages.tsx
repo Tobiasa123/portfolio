@@ -47,13 +47,12 @@ export default function ChatMessages({ userId }: ChatMessagesProps) {
     }
   }, [messages]);
 
-  if (loading)
-    return <div className="p-2 text-sm text-surface-fg/70">Loading...</div>;
+  if (loading) return <div className="p-2 text-sm text-surface-fg/70">Loading...</div>;
 
   return (
     <div
       ref={messagesRef}
-      className="border border-border rounded-base overflow-y-auto p-2 flex flex-col gap-2"
+      className="h-[300px] overflow-y-auto p-2 flex flex-col gap-2 rounded-base"
     >
       {messages.map((m) => {
         const timestamp: Date =
