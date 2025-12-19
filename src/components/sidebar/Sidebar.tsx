@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion } from "motion/react";
 import SidebarHeader from "./SidebarHeader";
 import SidebarNav from "./SidebarNav";
 import SidebarFooter from "./SidebarFooter";
@@ -10,102 +11,120 @@ interface SidebarProps {
   role: string;
 }
 
-const MOBILE_BREAKPOINT = 640;
+const MOBILE_BREAKPOINT = 1024;
+const SIDEBAR_WIDTH = 256;
+const SIDEBAR_COLLAPSED_WIDTH = 64;
 
 export default function Sidebar({ role }: SidebarProps) {
-  const [collapsed, setCollapsed] = useState(true);
   const sidebarRef = useRef<HTMLElement>(null);
 
+  const [collapsed, setCollapsed] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [canHover, setCanHover] = useState(false);
+
+  /* -----------------------------
+     Client environment detection
+  ------------------------------ */
   useEffect(() => {
-    const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
-    setCollapsed(isMobile);
+    setMounted(true);
+
+    const updateEnv = () => {
+      const mobile = window.innerWidth < MOBILE_BREAKPOINT;
+      setIsMobile(mobile);
+      setCollapsed(mobile);
+
+      setCanHover(
+        window.matchMedia("(hover: hover) and (pointer: fine)").matches
+      );
+    };
+
+    updateEnv();
+    window.addEventListener("resize", updateEnv);
+    return () => window.removeEventListener("resize", updateEnv);
   }, []);
 
+  /* -----------------------------
+     Lock scroll on mobile open
+  ------------------------------ */
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !collapsed) {
+    if (!mounted) return;
+
+    document.body.style.overflow =
+      isMobile && !collapsed ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobile, collapsed, mounted]);
+
+  /* -----------------------------
+     Escape closes mobile sidebar
+  ------------------------------ */
+  useEffect(() => {
+    if (!mounted) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isMobile && !collapsed) {
         setCollapsed(true);
       }
     };
 
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, [collapsed]);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isMobile, collapsed, mounted]);
 
-  useEffect(() => {
-    if (!collapsed && window.innerWidth < MOBILE_BREAKPOINT) {
-      const sidebar = sidebarRef.current;
-      if (!sidebar) return;
+  const handleToggle = useCallback(() => setCollapsed((v) => !v), []);
 
-      const focusableElements = sidebar.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      const firstElement = focusableElements[0] as HTMLElement;
-      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+  const isExpanded = isMobile ? !collapsed : isHovered;
 
-      const handleTab = (e: KeyboardEvent) => {
-        if (e.key !== "Tab") return;
-
-        if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            lastElement?.focus();
-            e.preventDefault();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            firstElement?.focus();
-            e.preventDefault();
-          }
-        }
-      };
-
-      sidebar.addEventListener("keydown", handleTab as any);
-      firstElement?.focus();
-
-      return () => sidebar.removeEventListener("keydown", handleTab as any);
-    }
-  }, [collapsed]);
-
-  const handleToggle = () => setCollapsed(!collapsed);
+  if (!mounted) return null;
 
   return (
     <>
-      {/* Floating toggle button (shows when collapsed) */}
-      {collapsed && (
-        <SidebarToggleButton
-          collapsed={collapsed}
-          onClick={handleToggle}
-          aria-label="Open sidebar"
-        />
+      {/* Mobile toggle button */}
+      {isMobile && collapsed && (
+        <SidebarToggleButton collapsed onClick={handleToggle} />
       )}
 
-      {/* Mobile overlay backdrop */}
-      {!collapsed && (
+      {/* Mobile overlay */}
+      {isMobile && !collapsed && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 sm:hidden transition-opacity duration-200"
+          className="fixed inset-0 z-40 bg-black/50"
           onClick={handleToggle}
           aria-hidden="true"
         />
       )}
 
-      {/* Sidebar wrapper - reserves space on desktop */}
-      <div className={`${collapsed ? "" : "sm:w-64"} transition-all duration-200`} aria-label="Sidebar container">
-        <aside
-          ref={sidebarRef}
-          className={`
-            flex flex-col h-screen w-64 bg-surface border-r border-border
-            transition-transform duration-200 ease-in-out z-50
-            fixed top-0 left-0
-            ${collapsed ? "-translate-x-64" : "translate-x-0"}
-          `}
-          aria-label="Main navigation sidebar"
-          aria-hidden={collapsed}
-        >
-          <SidebarHeader collapsed={collapsed} onToggle={handleToggle} />
-          <SidebarNav collapsed={collapsed} role={role} />
-          <SidebarFooter collapsed={collapsed} />
-        </aside>
-      </div>
+      {/* Sidebar */}
+      <motion.aside
+        ref={sidebarRef}
+        role="navigation"
+        aria-label="Main navigation"
+        className="fixed left-0 top-0 z-50 flex h-screen flex-col overflow-hidden border-r border-border bg-surface"
+        initial={false}
+        onMouseEnter={(e) => {
+          if (!canHover) return;
+          if (e.clientX <= SIDEBAR_COLLAPSED_WIDTH + 16) setIsHovered(true);
+        }}
+        onMouseLeave={() => {
+          if (canHover) setIsHovered(false);
+        }}
+        animate={{
+          width: isMobile
+            ? SIDEBAR_WIDTH
+            : isExpanded
+            ? SIDEBAR_WIDTH
+            : SIDEBAR_COLLAPSED_WIDTH,
+          x: isMobile && collapsed ? -SIDEBAR_WIDTH : 0,
+        }}
+        transition={{ duration: 0.15, ease: "easeInOut" }}
+      >
+        <SidebarHeader collapsed={!isExpanded} onToggle={handleToggle} isMobile={isMobile} />
+        <SidebarNav collapsed={!isExpanded} role={role} />
+        <SidebarFooter collapsed={!isExpanded} />
+      </motion.aside>
     </>
   );
 }

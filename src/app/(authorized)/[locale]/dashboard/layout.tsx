@@ -1,7 +1,6 @@
-// src/app/(authorized)/[locale]/dashboard/layout.tsx
 import { redirect } from "next/navigation";
 import Sidebar from "@/components/sidebar/Sidebar";
-import ChatLauncher from "@/components/ChatLauncher"; // use launcher
+import ChatLauncher from "@/components/ChatLauncher";
 import { requireAuth } from "@/lib/auth";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -13,9 +12,8 @@ interface DashboardLayoutProps {
 }
 
 export default async function DashboardLayout({ children, params }: DashboardLayoutProps) {
-  const { locale } = await params; 
-  const messages = await getMessages({ locale }); // loads public + authorized messages
-
+  const { locale } = await params;
+  const messages = await getMessages({ locale });
   const user = await requireAuth();
   if (!user) redirect("/login");
 
@@ -24,13 +22,16 @@ export default async function DashboardLayout({ children, params }: DashboardLay
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <div className="grid grid-cols-[auto_1fr] h-screen bg-pink-00 text-fg">
+      <div className="flex h-screen bg-bg text-fg">
+        {/* Sidebar */}
         <Sidebar role={role} />
-        <main className="w-full max-w-6xl mx-auto my-6 p-6 border border-border rounded-md  relative">
-          {children}
 
-          {/* only show chat for non-admins via launcher */}
-          {!isAdmin && <ChatLauncher userId={user.uid} />}
+        {/* Main content centered */}
+        <main className="flex justify-center w-full overflow-auto p-4">
+          <div className="w-full max-w-6xl my-6 p-6 border border-border rounded-md relative">
+            {children}
+            {!isAdmin && <ChatLauncher userId={user.uid} />}
+          </div>
         </main>
       </div>
     </NextIntlClientProvider>
