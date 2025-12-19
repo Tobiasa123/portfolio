@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence } from "motion/react";
 import ChatWidget from "./ChatWidget/ChatWidget";
 import { FiMessageCircle } from "react-icons/fi";
 
@@ -9,7 +10,9 @@ export default function ChatLauncher({ userId }: { userId: string }) {
 
   return (
     <>
-      {open && <ChatWidget userId={userId} onClose={() => setOpen(false)} />}
+      <AnimatePresence>
+        {open && <ChatWidget userId={userId} onClose={() => setOpen(false)} />}
+      </AnimatePresence>
 
       {!open && (
         <div className="fixed bottom-5 right-5">

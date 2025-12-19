@@ -1,63 +1,74 @@
-//src/components/LanguageSwitcher.tsx
 "use client";
 
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/routing";
 import { useEffect, useRef, useState } from "react";
-import { HiChevronDown } from "react-icons/hi";
+import { HiChevronDown, HiGlobeAlt } from "react-icons/hi";
+
+interface LanguageSwitcherProps {
+  small?: boolean; // collapsed sidebar
+  fullWidth?: boolean; // expanded sidebar
+}
 
 const locales = [
   { code: "en", label: "English" },
-  { code: "sv", label: "Svenska" }
+  { code: "sv", label: "Svenska" },
 ];
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ small = false, fullWidth = false }: LanguageSwitcherProps) {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false); 
+  const [mounted, setMounted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setMounted(true); 
-  }, []);
-
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
-    function onClick(e: MouseEvent) {
+    function handleClickOutside(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false);
       }
     }
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   if (!mounted) return null;
 
   const current = locales.find(l => l.code === locale);
 
+  // sizing classes
+  const heightClass = "h-10";
+  const widthClass = fullWidth ? "w-full" : small ? "w-10" : "w-32"; // small icon, medium button, full-width optional
+  const paddingClass = "px-3";
+
   return (
     <div ref={ref} className="relative">
-      {/* Trigger */}
       <button
         type="button"
         onClick={() => setOpen(v => !v)}
-        className="
-          h-9 px-3 rounded-base border border-border
+        className={`
+          ${widthClass} ${heightClass} ${paddingClass}
+          flex items-center justify-center gap-2
+          rounded-base border border-border
           bg-surface text-surface-fg text-sm
-          flex items-center gap-2
-          hover:brightness-95
-          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-surface-foreground
-        "
+          transition-all duration-150
+        `}
+        aria-label="Change language"
       >
-        {current?.label ?? "Language"}
-        <HiChevronDown className="w-4 h-4 opacity-60" />
+        {/* Icon always visible */}
+        <HiGlobeAlt className="w-5 h-5 shrink-0" />
+
+        {/* Label only if not small */}
+        {!small && <span className="truncate">{current?.label ?? "Language"}</span>}
+
+        {/* Dropdown arrow only if not small */}
+        {!small && <HiChevronDown className="w-4 h-4 opacity-60" />}
       </button>
 
-      {/* Dropdown */}
       {open && (
         <div
           className="
