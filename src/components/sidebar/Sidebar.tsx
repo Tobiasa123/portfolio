@@ -24,7 +24,6 @@ export default function Sidebar({ role }: SidebarProps) {
   const [mounted, setMounted] = useState(false);
   const [canHover, setCanHover] = useState(false);
 
-
   useEffect(() => {
     setMounted(true);
 
@@ -42,7 +41,6 @@ export default function Sidebar({ role }: SidebarProps) {
     window.addEventListener("resize", updateEnv);
     return () => window.removeEventListener("resize", updateEnv);
   }, []);
-
 
   useEffect(() => {
     if (!mounted) return;
@@ -97,10 +95,10 @@ export default function Sidebar({ role }: SidebarProps) {
         aria-label="Main navigation"
         initial={false}
         className={`
-          flex flex-col overflow-hidden border-r border-border bg-surface
+          flex flex-col overflow-hidden border-r border-border bg-surface pointer-events-auto
           ${isMobile
             ? "fixed left-0 top-0 z-50 h-screen"
-            : "absolute left-0 top-0 h-full"}
+            : "absolute left-0 top-0 h-full z-30"}
         `}
         onMouseEnter={(e) => {
           if (!canHover) return;
