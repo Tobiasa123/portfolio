@@ -10,9 +10,9 @@ export function PublicHeader() {
   const t = useTranslations("public");
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 border-b border-border bg-bg">
-      <div className="mx-auto max-w-6xl grid grid-cols-3 items-center gap-6 py-2">
-
+    <header className="w-full shrink-0 border-b border-border bg-bg z-30">
+      <div className="mx-auto max-w-6xl grid grid-cols-3 items-center gap-6 py-2 px-4">
+        
         {/* Logo */}
         <div className="col-start-1">
           <Link href="/" className="text-lg font-semibold">

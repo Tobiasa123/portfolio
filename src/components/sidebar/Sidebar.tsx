@@ -24,9 +24,7 @@ export default function Sidebar({ role }: SidebarProps) {
   const [mounted, setMounted] = useState(false);
   const [canHover, setCanHover] = useState(false);
 
-  /* -----------------------------
-     Client environment detection
-  ------------------------------ */
+
   useEffect(() => {
     setMounted(true);
 
@@ -45,23 +43,16 @@ export default function Sidebar({ role }: SidebarProps) {
     return () => window.removeEventListener("resize", updateEnv);
   }, []);
 
-  /* -----------------------------
-     Lock scroll on mobile open
-  ------------------------------ */
+
   useEffect(() => {
     if (!mounted) return;
-
     document.body.style.overflow =
       isMobile && !collapsed ? "hidden" : "";
-
     return () => {
       document.body.style.overflow = "";
     };
   }, [isMobile, collapsed, mounted]);
 
-  /* -----------------------------
-     Escape closes mobile sidebar
-  ------------------------------ */
   useEffect(() => {
     if (!mounted) return;
 
@@ -75,7 +66,9 @@ export default function Sidebar({ role }: SidebarProps) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isMobile, collapsed, mounted]);
 
-  const handleToggle = useCallback(() => setCollapsed((v) => !v), []);
+  const handleToggle = useCallback(() => {
+    setCollapsed((v) => !v);
+  }, []);
 
   const isExpanded = isMobile ? !collapsed : isHovered;
 
@@ -88,7 +81,7 @@ export default function Sidebar({ role }: SidebarProps) {
         <SidebarToggleButton collapsed onClick={handleToggle} />
       )}
 
-      {/* Mobile overlay */}
+      {/* Mobile backdrop */}
       {isMobile && !collapsed && (
         <div
           className="fixed inset-0 z-40 bg-black/50"
@@ -102,11 +95,18 @@ export default function Sidebar({ role }: SidebarProps) {
         ref={sidebarRef}
         role="navigation"
         aria-label="Main navigation"
-        className="fixed left-0 top-0 z-50 flex h-screen flex-col overflow-hidden border-r border-border bg-surface"
         initial={false}
+        className={`
+          flex flex-col overflow-hidden border-r border-border bg-surface
+          ${isMobile
+            ? "fixed left-0 top-0 z-50 h-screen"
+            : "absolute left-0 top-0 h-full"}
+        `}
         onMouseEnter={(e) => {
           if (!canHover) return;
-          if (e.clientX <= SIDEBAR_COLLAPSED_WIDTH + 16) setIsHovered(true);
+          if (e.clientX <= SIDEBAR_COLLAPSED_WIDTH + 16) {
+            setIsHovered(true);
+          }
         }}
         onMouseLeave={() => {
           if (canHover) setIsHovered(false);
@@ -121,7 +121,11 @@ export default function Sidebar({ role }: SidebarProps) {
         }}
         transition={{ duration: 0.15, ease: "easeInOut" }}
       >
-        <SidebarHeader collapsed={!isExpanded} onToggle={handleToggle} isMobile={isMobile} />
+        <SidebarHeader
+          collapsed={!isExpanded}
+          onToggle={handleToggle}
+          isMobile={isMobile}
+        />
         <SidebarNav collapsed={!isExpanded} role={role} />
         <SidebarFooter collapsed={!isExpanded} />
       </motion.aside>
