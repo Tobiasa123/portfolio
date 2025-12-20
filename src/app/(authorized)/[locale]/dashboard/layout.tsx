@@ -4,16 +4,21 @@ import ChatLauncher from "@/components/ChatLauncher";
 import { requireAuth } from "@/lib/auth";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import '../../../globals.css';
+import "../../../globals.css";
+import { PublicHeader } from "@/components/PublicHeader";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }
 
-export default async function DashboardLayout({ children, params }: DashboardLayoutProps) {
+export default async function DashboardLayout({
+  children,
+  params,
+}: DashboardLayoutProps) {
   const { locale } = await params;
   const messages = await getMessages({ locale });
+
   const user = await requireAuth();
   if (!user) redirect("/login");
 
@@ -22,17 +27,34 @@ export default async function DashboardLayout({ children, params }: DashboardLay
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <div className="flex h-screen bg-bg text-fg">
-        {/* Sidebar */}
-        <Sidebar role={role} />
+      {/* Page root */}
+      <div className="h-screen flex flex-col bg-bg text-fg">
 
-        {/* Main content centered */}
-        <main className="flex justify-center w-full overflow-auto p-4">
-          <div className="w-full max-w-6xl my-6 p-6 border border-border rounded-md relative">
-            {children}
-            {!isAdmin && <ChatLauncher userId={user.uid} />}
+        {/* Header row (always above sidebar) */}
+        <PublicHeader />
+
+        {/* Main row */}
+        <div className="flex flex-1 overflow-hidden">
+
+          {/* Reserved sidebar space - maintains constant width */}
+          <div className="relative h-full shrink-0 w-16 lg:block hidden">
+            <Sidebar role={role} />
           </div>
-        </main>
+
+          {/* Mobile sidebar (outside reserved space) */}
+          <div className="lg:hidden">
+            <Sidebar role={role} />
+          </div>
+
+          {/* Content column -  stable width */}
+          <main className="flex-1 overflow-auto p-4 flex justify-center">
+            <div className="w-full max-w-6xl my-6 p-6 border border-border rounded-md relative">
+              {children}
+              {!isAdmin && <ChatLauncher userId={user.uid} />}
+            </div>
+          </main>
+
+        </div>
       </div>
     </NextIntlClientProvider>
   );
