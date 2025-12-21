@@ -1,7 +1,7 @@
 // src/app/(public)/[locale]/layout.tsx
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { PublicHeader } from '@/components/PublicHeader';
+import { Header } from '@/components/Header';
 import '../../globals.css';
 
 interface PublicLayoutProps {
@@ -18,8 +18,10 @@ export default async function PublicLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <PublicHeader />
-      {children}
+      <div className="h-screen flex flex-col bg-bg text-fg">
+        <Header />
+        {children}
+      </div>
     </NextIntlClientProvider>
   );
 }

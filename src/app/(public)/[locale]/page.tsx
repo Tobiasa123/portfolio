@@ -13,7 +13,7 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-primary">
+    <div className="h-full flex justify-center items-center bg-gradient-primary">
       <div className="grid grid-cols-2 gap-6 w-full max-w-6xl">
 
         <GlassCard>

@@ -5,7 +5,7 @@ import { requireAuth } from "@/lib/auth";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import "../../../globals.css";
-import { PublicHeader } from "@/components/PublicHeader";
+import { Header } from "@/components/Header";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -31,7 +31,7 @@ export default async function DashboardLayout({
       <div className="h-screen flex flex-col bg-bg text-fg">
 
         {/* Header row (always above sidebar) */}
-        <PublicHeader />
+        <Header />
 
         {/* Main row */}
         <div className="flex flex-1 overflow-hidden">

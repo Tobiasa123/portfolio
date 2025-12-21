@@ -94,7 +94,7 @@ export function AuthForm({ type, redirectTo }: AuthFormProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-primary">
+    <div className="h-full flex items-center justify-center bg-gradient-primary">
       <GlassCard className="flex flex-col gap-4 w-96">
         {/* Form Title */}
         <h1 className="text-2xl font-semibold text-fg text-center">
