@@ -125,7 +125,7 @@ export default function Sidebar({ role }: SidebarProps) {
           isMobile={isMobile}
         />
         <SidebarNav collapsed={!isExpanded} role={role} />
-        <SidebarFooter collapsed={!isExpanded} />
+        {/* <SidebarFooter collapsed={!isExpanded} /> */}
       </motion.aside>
     </>
   );

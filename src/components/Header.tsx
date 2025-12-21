@@ -1,18 +1,25 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/Button";
 import ThemeToggle from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { FiPower } from "react-icons/fi";
 
 interface HeaderProps {
-  user?: { uid: string; role: string } | null;
-  onLogout?: () => void;
+  user?: { uid: string; role?: string } | null;
 }
 
-export function Header({ user, onLogout }: HeaderProps) {
-  const t = useTranslations("public");
+export function Header({ user }: HeaderProps) {
+  const t = useTranslations("public.header");
+  const router = useRouter();
+
+  const logout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+  };
 
   return (
     <header className="w-full shrink-0 border-b border-border bg-bg z-30">
@@ -20,15 +27,15 @@ export function Header({ user, onLogout }: HeaderProps) {
         
         {/* Logo */}
         <div className="col-start-1">
-          <Link href="/" className="text-lg font-semibold">{t("logo")}</Link>
+          <Link href="/dashboard" className="text-lg font-semibold">{t("logo")}</Link>
         </div>
 
         {/* Navigation */}
         <nav className="col-start-2 justify-self-center flex gap-6">
           {user ? (
             <>
-              <Link href="/dashboard" className="text-sm hover:underline">Dashboard</Link>
-              <Link href="/profile" className="text-sm hover:underline">Profile</Link>
+              <Link href="/dashboard" className="text-sm hover:underline">{t("dashboard")}</Link>
+              <Link href="/profile" className="text-sm hover:underline">{t("profile")}</Link>
             </>
           ) : (
             <>
@@ -43,7 +50,10 @@ export function Header({ user, onLogout }: HeaderProps) {
           <LanguageSwitcher />
           <ThemeToggle />
           {user ? (
-            <Button onClick={onLogout}>Logout</Button>
+            <Button onClick={logout} className="flex items-center gap-2">
+              <FiPower className="w-4 h-4" />
+              {t("logout")}
+            </Button>
           ) : (
             <Link href="/login"><Button>{t("login")}</Button></Link>
           )}
