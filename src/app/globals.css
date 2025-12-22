@@ -1,8 +1,5 @@
 @import "tailwindcss";
 
-/* ----------------------------
-LIGHT THEME (default)
------------------------------ */
 :root {
   --background: 255 255 255;
   --foreground: 23 23 23;
@@ -34,9 +31,6 @@ LIGHT THEME (default)
   );
 }
 
-/* ----------------------------
-DARK THEME
------------------------------ */
 .dark {
   --background: 10 10 10;
   --foreground: 237 237 237;
@@ -63,18 +57,13 @@ DARK THEME
   );
 }
 
-/* ----------------------------
-GLOBAL BODY
------------------------------ */
 body {
   font-family: var(--font-sans), Arial, sans-serif;
   background-color: rgb(var(--background));
   color: rgb(var(--foreground));
 }
 
-/* ----------------------------
-UTILITY CLASSES
------------------------------ */
+
 .bg-bg { background-color: rgb(var(--background)); }
 .text-fg { color: rgb(var(--foreground)); }
 
@@ -99,9 +88,7 @@ UTILITY CLASSES
 .bg-gradient-primary { background: var(--gradient-primary); }
 .bg-gradient-accent { background: var(--gradient-accent); }
 
-/* ----------------------------
- GLASS CARD
------------------------------ */
+
 .glass-card {
   background-color: var(--glass-bg);
   border: 1px solid var(--glass-border);
@@ -110,12 +97,29 @@ UTILITY CLASSES
   padding: 2rem;
 }
 
-/* ----------------------------
- REGULAR CARD
------------------------------ */
 .card {
   background-color: rgb(var(--surface));
   border: 1px solid rgb(var(--border));
   border-radius: var(--radius);
   padding: 2rem;
+}
+
+.shape-divider-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.shape-divider-top svg {
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 140px;
+}
+
+.shape-divider-top .shape-fill {
+  fill: rgb(var(--background));
 }

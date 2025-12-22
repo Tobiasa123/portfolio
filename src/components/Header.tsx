@@ -22,31 +22,16 @@ export function Header({ user }: HeaderProps) {
   };
 
   return (
-    <header className="w-full shrink-0 border-b border-border bg-bg z-30">
-      <div className="mx-auto max-w-6xl grid grid-cols-3 items-center gap-6 py-2 px-4">
-        
+    <header className="relative w-full border-b border-border bg-bg p-2">
+      {/* Left + Right */}
+      <div className="flex items-center justify-between h-full">
         {/* Logo */}
-        <div className="col-start-1">
-          <Link href="/dashboard" className="text-lg font-semibold">{t("logo")}</Link>
-        </div>
-
-        {/* Navigation */}
-        <nav className="col-start-2 justify-self-center flex gap-6">
-          {user ? (
-            <>
-              <Link href="/dashboard" className="text-sm hover:underline">{t("dashboard")}</Link>
-              <Link href="/profile" className="text-sm hover:underline">{t("profile")}</Link>
-            </>
-          ) : (
-            <>
-              <Link href="/blog" className="text-sm hover:underline">{t("blog")}</Link>
-              <Link href="/docs" className="text-sm hover:underline">{t("docs")}</Link>
-            </>
-          )}
-        </nav>
+        <Link href={user ? "/dashboard" : "/"} className="text-lg font-semibold">
+          {t("logo")}
+        </Link>
 
         {/* Actions */}
-        <div className="col-start-3 justify-self-end flex items-center gap-3">
+        <div className="flex items-center gap-3">
           <LanguageSwitcher />
           <ThemeToggle />
           {user ? (
@@ -55,11 +40,24 @@ export function Header({ user }: HeaderProps) {
               {t("logout")}
             </Button>
           ) : (
-            <Link href="/login"><Button>{t("login")}</Button></Link>
+            <Link href="/login">
+              <Button>{t("login")}</Button>
+            </Link>
           )}
         </div>
-
       </div>
+
+      {/*  only show if no user (for now) */}
+      {!user && (
+        <nav className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-6">
+          <Link href="/blog" className="hover:underline">
+            {t("blog")}
+          </Link>
+          <Link href="/docs" className="hover:underline">
+            {t("docs")}
+          </Link>
+        </nav>
+      )}
     </header>
   );
 }
