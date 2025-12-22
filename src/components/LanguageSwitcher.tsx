@@ -72,7 +72,7 @@ export function LanguageSwitcher({ small = false, fullWidth = false }: LanguageS
       {open && (
         <div
           className="
-            absolute right-0 mt-2 min-w-[140px]
+            absolute right-0 mt-2 min-w-35
             rounded-base border border-border
             bg-surface shadow-lg
             overflow-hidden z-50
