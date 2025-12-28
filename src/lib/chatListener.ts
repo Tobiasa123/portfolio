@@ -1,6 +1,14 @@
 // src/lib/chatListener.ts
 import { db } from "./firebase";
-import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  Timestamp,
+  limit,
+  QueryConstraint,
+} from "firebase/firestore";
 
 export interface Message {
   id: string;
@@ -8,59 +16,89 @@ export interface Message {
   text: string;
   sender: "user" | "admin";
   status: "new" | "read";
-  timestamp: string; 
+  timestamp: string;
 }
 
+interface ListenerOptions {
+  limit?: number;
+  onError?: (error: Error) => void;
+}
+
+/**
+ * Real-time listener for user's chat messages
+ * Firestore rules ensure users can only read their own messages
+ */
 export function listenToMessages(
   userId: string,
   callback: (msgs: Message[]) => void,
-  onError?: (error: Error) => void
+  options: ListenerOptions = {}
 ): () => void {
-  if (!userId) {
-    console.warn("listenToMessages called without userId");
+  if (!userId || typeof userId !== "string") {
+    console.error("Invalid userId provided to listenToMessages");
     return () => {};
   }
 
-  const q = query(
-    collection(db, "chats", userId, "messages"),
-    orderBy("timestamp", "asc")
-  );
+  const { limit: maxMessages = 100, onError } = options;
 
-  const unsubscribe = onSnapshot(
-    q,
-    (snap) => {
-      const messages: Message[] = snap.docs.map((d) => {
-        const data = d.data();
-        
-        // Handle Firestore Timestamp conversion
-        let timestampStr: string;
-        if (data.timestamp instanceof Timestamp) {
-          timestampStr = data.timestamp.toDate().toISOString();
-        } else if (data.timestamp instanceof Date) {
-          timestampStr = data.timestamp.toISOString();
-        } else if (typeof data.timestamp === "string") {
-          timestampStr = data.timestamp;
-        } else {
-          timestampStr = new Date().toISOString();
+  try {
+    const constraints: QueryConstraint[] = [
+      orderBy("timestamp", "asc"),
+      limit(maxMessages),
+    ];
+
+    const q = query(
+      collection(db, "chats", userId, "messages"),
+      ...constraints
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        try {
+          const messages: Message[] = snapshot.docs.map((doc) => {
+            const data = doc.data();
+
+            const text = typeof data.text === "string" ? data.text : "";
+            const sender = data.sender === "admin" ? "admin" : "user";
+            const status = data.status === "read" ? "read" : "new";
+
+            let timestampStr: string;
+            if (data.timestamp instanceof Timestamp) {
+              timestampStr = data.timestamp.toDate().toISOString();
+            } else if (data.timestamp instanceof Date) {
+              timestampStr = data.timestamp.toISOString();
+            } else if (typeof data.timestamp === "string") {
+              timestampStr = data.timestamp;
+            } else {
+              timestampStr = new Date().toISOString();
+            }
+
+            return {
+              id: doc.id,
+              userId: data.userId || userId,
+              text,
+              sender,
+              status,
+              timestamp: timestampStr,
+            };
+          });
+
+          callback(messages);
+        } catch (error) {
+          console.error("Error processing snapshot:", error);
+          onError?.(error as Error);
         }
+      },
+      (error) => {
+        console.error("Firestore listener error:", error);
+        onError?.(error as Error);
+      }
+    );
 
-        return {
-          id: d.id,
-          userId: data.userId || userId,
-          text: data.text || "",
-          sender: data.sender || "user",
-          status: data.status || "new",
-          timestamp: timestampStr,
-        };
-      });
-
-      callback(messages);
-    },
-    (err) => {
-      console.error("Firestore listener error:", err);
-      onError?.(err as Error);
-    }
-  );
-
-  return unsubscribe;
+    return unsubscribe;
+  } catch (error) {
+    console.error("Error setting up listener:", error);
+    onError?.(error as Error);
+    return () => {};
+  }
 }
