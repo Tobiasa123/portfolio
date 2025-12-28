@@ -9,6 +9,14 @@ interface Conversation {
   userId: string;
   messages: Message[];
   lastMessageAt?: string;
+  unreadCount?: number;
+}
+
+interface AdminChatResponse {
+  conversations: Conversation[];
+  total: number;
+  limit: number;
+  offset: number;
 }
 
 export default function ChatsClient() {
@@ -26,7 +34,6 @@ export default function ChatsClient() {
     }
   };
 
-  // Load initial conversations
   useEffect(() => {
     const fetchChats = async () => {
       try {
@@ -42,11 +49,11 @@ export default function ChatsClient() {
           throw new Error(body.error || "Failed to load chats");
         }
         
-        const data: Conversation[] = await res.json();
-        setConversations(data);
+        const data: AdminChatResponse = await res.json();
+        setConversations(data.conversations || []);
         
-        if (data.length > 0 && !selectedUserId) {
-          setSelectedUserId(data[0].userId);
+        if (data.conversations.length > 0 && !selectedUserId) {
+          setSelectedUserId(data.conversations[0].userId);
         }
       } catch (err: any) {
         setError(err.message || "Failed to load chats");
@@ -56,9 +63,8 @@ export default function ChatsClient() {
     };
 
     fetchChats();
-  }, [selectedUserId]);
+  }, []);
 
-  // Setup real-time listener for selected conversation
   useEffect(() => {
     if (!selectedUserId) return;
 
@@ -68,23 +74,30 @@ export default function ChatsClient() {
         setConversations((prev) =>
           prev.map((c) =>
             c.userId === selectedUserId
-              ? { ...c, messages: msgs }
+              ? { 
+                  ...c, 
+                  messages: msgs,
+                  // ✅ Recalculate unread count from messages
+                  unreadCount: msgs.filter(m => m.status === "new" && m.sender === "user").length
+                }
               : c
           )
         );
+        setTimeout(scrollToBottom, 100);
       },
-      (err) => {
-        console.error("Listener error for", selectedUserId, err);
+      {
+        onError: (err) => {
+          console.error("Listener error for", selectedUserId, err);
+        },
       }
     );
 
     return () => unsubscribe();
   }, [selectedUserId]);
 
-  // Auto-scrolling brev
   useEffect(() => {
     scrollToBottom();
-  }, [selectedUserId, conversations]);
+  }, [selectedUserId]);
 
   const currentChat = conversations.find((c) => c.userId === selectedUserId);
 
@@ -92,12 +105,17 @@ export default function ChatsClient() {
     if (!selectedUserId || !text.trim() || sending) return;
 
     setSending(true);
+    setError(null);
+    
     try {
       const res = await fetch("/api/admin/chat", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: selectedUserId, text: text.trim() }),
+        body: JSON.stringify({ 
+          userId: selectedUserId, 
+          text: text.trim() 
+        }),
       });
 
       if (!res.ok) {
@@ -108,23 +126,31 @@ export default function ChatsClient() {
       setText("");
       setTimeout(scrollToBottom, 100);
     } catch (err: any) {
-      alert(err.message || "Send failed");
+      setError(err.message || "Failed to send message");
+      console.error("Send message error:", err);
     } finally {
       setSending(false);
     }
   };
 
   if (loading) {
-    return <div className="text-fg p-4">Loading chats...</div>;
+    return (
+      <div className="flex items-center justify-center h-150">
+        <div className="text-fg">Loading chats...</div>
+      </div>
+    );
   }
 
-  if (error) {
-    return <div className="text-red-500 p-4">{error}</div>;
+  if (error && conversations.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-150">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
   }
 
   return (
-    <div className="grid grid-cols-[260px_1fr] gap-4 h-[600px]">
-      {/* Sidebar */}
+    <div className="grid grid-cols-[260px_1fr] gap-4 h-150">
       <div className="bg-surface border-border border rounded-base overflow-y-auto">
         <div className="p-3">
           <h2 className="font-bold mb-3 text-surface-fg">Conversations</h2>
@@ -135,18 +161,26 @@ export default function ChatsClient() {
               {conversations.map((c) => {
                 const lastMsg = c.messages[c.messages.length - 1];
                 const preview = lastMsg?.text.slice(0, 40) || "No messages";
+                const hasUnread = (c.unreadCount ?? 0) > 0;
 
                 return (
                   <button
                     key={c.userId}
                     onClick={() => setSelectedUserId(c.userId)}
-                    className={`w-full text-left p-2 rounded-base border text-sm transition-colors ${
+                    className={`w-full text-left p-2 rounded-base border text-sm transition-colors relative ${
                       c.userId === selectedUserId
-                        ? "bg-blue-100 border-blue-400"
-                        : "hover:bg-surface/50 border-border"
+                        ? "bg-bg border-blue-400"
+                        : "border-border hover:cursor-pointer hover:bg-slate-500"
                     }`}
                   >
-                    <div className="truncate font-semibold">{c.userId}</div>
+                    <div className="flex items-center justify-between">
+                      <div className="truncate font-semibold">{c.userId}</div>
+                      {hasUnread && (
+                        <span className="bg-blue-500  text-xs px-2 py-0.5 rounded-full">
+                          {c.unreadCount}
+                        </span>
+                      )}
+                    </div>
                     <div className="text-xs text-surface-fg/70 mt-1 truncate">
                       {preview}
                     </div>
@@ -161,13 +195,22 @@ export default function ChatsClient() {
         </div>
       </div>
 
-      {/* Chat window */}
-      <div className="flex-1 min-w-0 bg-surface border-border border rounded-base flex flex-col max-h-[600px]">
+      <div className="flex-1 min-w-0 bg-surface border-border border rounded-base flex flex-col max-h-150">
         {!currentChat ? (
-          <div className="m-auto text-surface-fg/70">Select a conversation</div>
+          <div className="flex items-center justify-center h-full">
+            <div className="text-surface-fg/70">Select a conversation</div>
+          </div>
         ) : (
           <>
-            {/* Messages */}
+            <div className="border-b border-border p-3">
+              <div className="font-semibold text-surface-fg">
+                Chat with {selectedUserId}
+              </div>
+              <div className="text-xs text-surface-fg/60">
+                {currentChat.messages.length} messages
+              </div>
+            </div>
+
             <div
               ref={messagesRef}
               className="flex-1 overflow-y-auto p-4 space-y-3"
@@ -188,26 +231,37 @@ export default function ChatsClient() {
                   return (
                     <div
                       key={m.id}
-                      className={`p-3 rounded-base max-w-[70%] wrap-break-word ${
-                        isAdmin
-                          ? "ml-auto chat-admin"
-                          : "mr-auto chat-user"
-                      }`}
+                      className={`flex ${isAdmin ? "justify-end" : "justify-start"}`}
                     >
-                      <p className="text-sm m-0">{m.text}</p>
-                      <span className="text-xs opacity-60 block mt-1">
-                        {timeStr}
-                      </span>
+                      <div
+                        className={`p-3 rounded-base max-w-[70%] ${
+                          isAdmin
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-200 text-gray-900"
+                        }`}
+                      >
+                        <p className="text-sm wrap-break-word whitespace-pre-wrap">
+                          {m.text}
+                        </p>
+                        <span className="text-xs opacity-60 block mt-1">
+                          {timeStr}
+                        </span>
+                      </div>
                     </div>
                   );
                 })
               )}
             </div>
 
-            {/* Input */}
+            {error && (
+              <div className="px-4 py-2 bg-red-50 border-t border-red-200">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+
             <div className="border-t border-border p-3 flex gap-2">
               <input
-                className="flex-1 border border-border rounded-base p-2 bg-bg text-fg"
+                className="flex-1 border border-border rounded-base p-2 bg-bg text-fg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Type a message..."
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -228,7 +282,6 @@ export default function ChatsClient() {
           </>
         )}
       </div>
-
     </div>
   );
 }
