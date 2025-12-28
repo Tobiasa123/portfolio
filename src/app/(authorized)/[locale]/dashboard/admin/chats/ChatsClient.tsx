@@ -169,14 +169,14 @@ export default function ChatsClient() {
                     onClick={() => setSelectedUserId(c.userId)}
                     className={`w-full text-left p-2 rounded-base border text-sm transition-colors relative ${
                       c.userId === selectedUserId
-                        ? "bg-blue-100 border-blue-400"
-                        : "hover:bg-surface/50 border-border"
+                        ? "bg-bg border-blue-400"
+                        : "border-border hover:cursor-pointer hover:bg-slate-500"
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="truncate font-semibold">{c.userId}</div>
                       {hasUnread && (
-                        <span className="bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
+                        <span className="bg-blue-500  text-xs px-2 py-0.5 rounded-full">
                           {c.unreadCount}
                         </span>
                       )}
