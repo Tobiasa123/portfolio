@@ -1,4 +1,3 @@
-//src/components/ChatWidget/ChatMessages.tsx
 "use client";
 
 import { useRef, useEffect, useState } from "react";
@@ -9,7 +8,9 @@ interface ChatMessagesProps {
 }
 
 export default function ChatMessages({ userId }: ChatMessagesProps) {
-  const messagesRef = useRef<HTMLDivElement | null>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const isInitialLoad = useRef(true); // ✅ Track first render
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,44 +42,44 @@ export default function ChatMessages({ userId }: ChatMessagesProps) {
   }, [userId]);
 
   useEffect(() => {
-    if (messagesRef.current) {
-      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-    }
+    if (!bottomRef.current) return;
+
+    bottomRef.current.scrollIntoView({
+      behavior: isInitialLoad.current ? "auto" : "smooth",
+    });
+
+    isInitialLoad.current = false;
   }, [messages]);
 
   if (loading) {
     return (
-      <div className="h-75 flex items-center justify-center">
-        <div className="text-sm text-surface-fg/70">Loading messages...</div>
+      <div className="flex h-full items-center justify-center">
+        <span className="text-sm opacity-70">Loading messages…</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="h-75 flex items-center justify-center">
-        <div className="text-sm text-red-500">{error}</div>
+      <div className="flex h-full items-center justify-center text-red-500">
+        {error}
       </div>
     );
   }
 
   if (messages.length === 0) {
     return (
-      <div className="h-75 flex items-center justify-center">
-        <div className="text-sm text-surface-fg/50">No messages yet</div>
+      <div className="flex h-full items-center justify-center opacity-50">
+        No messages yet
       </div>
     );
   }
 
   return (
-    <div
-      ref={messagesRef}
-      className="h-75 overflow-y-auto p-2 flex flex-col gap-2 rounded-base"
-    >
+    <div className="p-2 flex flex-col gap-2">
       {messages.map((m) => {
         const isUser = m.sender === "user";
-        const timestamp = new Date(m.timestamp);
-        const timeStr = timestamp.toLocaleTimeString([], {
+        const timeStr = new Date(m.timestamp).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         });
@@ -95,14 +96,16 @@ export default function ChatMessages({ userId }: ChatMessagesProps) {
                   : "bg-gray-200 text-gray-900"
               }`}
             >
-              <p className="text-sm wrap-break-word whitespace-pre-wrap m-0">
-                {m.text}
-              </p>
-              <span className="text-xs opacity-60 block mt-1">{timeStr}</span>
+              <p className="text-sm whitespace-pre-wrap">{m.text}</p>
+              <span className="text-xs opacity-60 block mt-1">
+                {timeStr}
+              </span>
             </div>
           </div>
         );
       })}
+
+      <div ref={bottomRef} />
     </div>
   );
 }

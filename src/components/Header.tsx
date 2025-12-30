@@ -23,37 +23,61 @@ export function Header({ user }: HeaderProps) {
     router.push("/login");
   };
 
+  // Public header (no user) 
+  if (!user) {
+    return (
+      <header className="relative w-full border-b border-border bg-bg p-4">
+        <div className="flex items-center justify-between h-full">
+          <Link href="/" className="text-lg font-semibold">
+            {t("logo")}
+          </Link>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <ThemeToggle />
+            <Link href="/login">
+              <Button>{t("login")}</Button>
+            </Link>
+          </div>
+        </div>
+
+        <nav className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-6">
+          <Link href="/blog" className="hover:underline">
+            {t("blog")}
+          </Link>
+          <Link href="/docs" className="hover:underline">
+            {t("docs")}
+          </Link>
+        </nav>
+      </header>
+    );
+  }
+
+  // Logged-in header
   return (
-    <header className="relative w-full border-b border-border bg-bg p-2">
+    <header className="relative w-full border-b border-border bg-bg p-4">
       <div className="flex items-center justify-between h-full">
-        <Link href={user ? "/dashboard" : "/"} className="text-lg font-semibold">
-          {t("logo")}
-        </Link>
+        {/* Logo placeholder on mobile to keep layout */}
+        <div className="shrink-0">
+          {!isMobile ? (
+            <Link href="/dashboard" className="text-lg font-semibold">
+              {t("logo")}
+            </Link>
+          ) : (
+            <div className="w-16 h-0" />
+          )}
+        </div>
 
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
           <ThemeToggle />
-          {/* Only show logout on desktop */}
-          {user && !isMobile && (
+          {!isMobile && (
             <Button onClick={logout} className="flex items-center gap-2">
               <FiPower className="w-4 h-4" />
               {t("logout")}
             </Button>
           )}
-          {!user && (
-            <Link href="/login">
-              <Button>{t("login")}</Button>
-            </Link>
-          )}
         </div>
       </div>
-
-      {!user && (
-        <nav className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-6">
-          <Link href="/blog" className="hover:underline">{t("blog")}</Link>
-          <Link href="/docs" className="hover:underline">{t("docs")}</Link>
-        </nav>
-      )}
     </header>
   );
 }
