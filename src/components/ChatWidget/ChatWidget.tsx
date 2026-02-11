@@ -1,5 +1,5 @@
 "use client";
-
+//src/components/ChatWidget/ChatWidget.tsx
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import { Button } from "@/components/Button";

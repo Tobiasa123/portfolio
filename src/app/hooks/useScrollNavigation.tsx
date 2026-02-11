@@ -18,11 +18,9 @@ export function useScrollNavigation(role: string) {
       const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}/, "");
       
       return filteredItems.findIndex(item => {
-        // Exact match /dashboard
         if (item.href === "/dashboard") {
           return pathWithoutLocale === "/dashboard";
         }
-    
         return pathWithoutLocale.startsWith(item.href);
       });
     };
@@ -43,18 +41,65 @@ export function useScrollNavigation(role: string) {
       }, 500);
     };
 
+    const getScrollContainer = () => {
+      return document.querySelector('main.overflow-auto') as HTMLElement;
+    };
+
+    const isAtTop = () => {
+      const container = getScrollContainer();
+      return container ? container.scrollTop <= 10 : window.scrollY <= 10;
+    };
+
+    const isAtBottom = () => {
+      const container = getScrollContainer();
+      if (container) {
+        return container.scrollHeight - container.scrollTop - container.clientHeight <= 10;
+      }
+      return document.documentElement.scrollHeight - window.scrollY - window.innerHeight <= 10;
+    };
+
+    // Check if the event originated from within a scrollable widget/modal
+    const isScrollingInWidget = (target: EventTarget | null): boolean => {
+      if (!target || !(target instanceof Element)) return false;
+      
+      // Check if scrolling within chat widget or any overflow container
+      const scrollableParent = (target as Element).closest('.overflow-y-auto, .overflow-auto');
+      if (scrollableParent) {
+        const mainContainer = getScrollContainer();
+        return scrollableParent !== mainContainer;
+      }
+      
+      return false;
+    };
+
     const onWheel = (e: WheelEvent) => {
-      if (e.deltaY > 0) onNavigate(1);
-      else if (e.deltaY < 0) onNavigate(-1);
+      // Ignore if scrolling inside a widget
+      if (isScrollingInWidget(e.target)) return;
+
+      if (e.deltaY > 0 && isAtBottom()) {
+        e.preventDefault();
+        onNavigate(1);
+      } else if (e.deltaY < 0 && isAtTop()) {
+        e.preventDefault();
+        onNavigate(-1);
+      }
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
+      // Ignore if focus is inside a widget or input
+      if (isScrollingInWidget(e.target)) return;
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
       if (e.key === "ArrowDown" || e.key === "PageDown") {
-        e.preventDefault();
-        onNavigate(1);
+        if (isAtBottom()) {
+          e.preventDefault();
+          onNavigate(1);
+        }
       } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-        e.preventDefault();
-        onNavigate(-1);
+        if (isAtTop()) {
+          e.preventDefault();
+          onNavigate(-1);
+        }
       }
     };
 
