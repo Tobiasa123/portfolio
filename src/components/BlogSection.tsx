@@ -1,6 +1,7 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export interface BlogPost {
   id: string;
@@ -15,6 +16,8 @@ interface BlogSectionProps {
 }
 
 export default function BlogSection({ limit = 1 }: BlogSectionProps) {
+  const t = useTranslations("public"); // still using "public" namespace
+
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +26,6 @@ export default function BlogSection({ limit = 1 }: BlogSectionProps) {
       try {
         const res = await fetch(`/api/blog?limit=${limit}`, { cache: "no-store" });
         const data = await res.json();
-
         setPosts(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Failed to fetch blog posts:", err);
@@ -35,15 +37,18 @@ export default function BlogSection({ limit = 1 }: BlogSectionProps) {
     fetchPosts();
   }, [limit]);
 
-  if (loading) return <p>Loading blog posts...</p>;
-  if (!posts.length) return <p>No blog posts yet.</p>;
+  if (loading) return <p>{t("blogSection.loading")}</p>;
+  if (!posts.length) return <p>{t("blogSection.noPosts")}</p>;
 
   return (
-    <div className="flex flex-col gap-4 w-full max-w-2xl">
+    <div className="flex flex-col gap-4 w-full border bg-bg rounded-md">
       {posts.map((post) => (
-        <div key={post.id} className="p-4 border rounded bg-surface text-surface-fg">
-          <h2 className="text-xl font-semibold">{post.title}</h2>
-          <p className="text-sm opacity-70">By {post.author}</p>
+        <div key={post.id} className="p-4 text-surface-fg">
+          <h2 className="text-xl font-semibold mb-2">{t("blogSection.recent")}</h2>
+          <h3 className="text-lg font-semibold">{post.title}</h3>
+          <p className="text-sm opacity-70">
+            {t("blogSection.by")} {post.author}
+          </p>
           <p className="mt-2">{post.content}</p>
         </div>
       ))}

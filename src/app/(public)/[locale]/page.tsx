@@ -13,7 +13,7 @@ export default function Home() {
     <div className="relative h-full flex justify-center items-center bg-gradient-primary">
       
       {/* Shape Divider ill maybe use this in future*/}
-      <div className="shape-divider-top">
+      {/* <div className="shape-divider-top">
         <svg
           data-name="Layer 1"
           xmlns="http://www.w3.org/2000/svg"
@@ -25,22 +25,21 @@ export default function Home() {
             className="shape-fill"
           />
         </svg>
-      </div>
+      </div> */}
 
       {/* Content */}
-      <div className="relative grid grid-cols-2 gap-6 w-full max-w-6xl">
-        <GlassCard>
-          <BlogSection limit={1} />
+        <GlassCard className="relative grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-7xl">
+          <div>
+            <BlogSection limit={1} />
+          </div>
+
+          <div className="flex flex-col gap-4 w-full">
+            <h1 className="text-2xl font-semibold">{t("title")}</h1>
+
+            <Button text={t("login")} onClick={() => router.push("/login")} />
+            <Button text={t("guest")} onClick={() => router.push("/")} />
+          </div>
         </GlassCard>
-
-        <GlassCard className="flex flex-col gap-4 w-full">
-          <h1 className="text-2xl font-semibold">{t("title")}</h1>
-
-          <Button text={t("login")} onClick={() => router.push("/login")} />
-          <Button text={t("guest")} onClick={() => router.push("/")} />
-        </GlassCard>
-      </div>
-
     </div>
   );
 }
