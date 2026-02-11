@@ -14,13 +14,18 @@ interface SidebarNavProps {
 export default function SidebarNav({ role, collapsed }: SidebarNavProps) {
   const pathname = usePathname();
   const t = useTranslations("sidebar");
+  const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}/, "");
 
   return (
     <nav className="mt-6 flex flex-1 flex-col gap-1 px-2">
       {navItems.map((item) => {
         if (item.role && item.role !== role) return null;
 
-        const active = pathname === item.href;
+        const active =
+          item.href === "/dashboard"
+            ? pathWithoutLocale === "/dashboard"
+            : pathWithoutLocale.startsWith(item.href);
+
         const Icon = item.icon;
 
         return (

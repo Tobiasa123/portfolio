@@ -6,16 +6,14 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import "../../../globals.css";
 import { Header } from "@/components/Header";
+import DashboardClientWrapper from "./DashboardClientWrapper";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }
 
-export default async function DashboardLayout({
-  children,
-  params,
-}: DashboardLayoutProps) {
+export default async function DashboardLayout({ children, params }: DashboardLayoutProps) {
   const { locale } = await params;
   const messages = await getMessages({ locale });
 
@@ -31,6 +29,7 @@ export default async function DashboardLayout({
         <Header user={user} />
 
         <div className="flex flex-1 overflow-hidden">
+          {/* Sidebar already rendered in layout */}
           <div className="relative h-full shrink-0 w-16 lg:block hidden">
             <Sidebar role={role} />
           </div>
@@ -39,12 +38,15 @@ export default async function DashboardLayout({
             <Sidebar role={role} />
           </div>
 
-          <main className="flex-1 overflow-auto p-4 flex justify-center">
-            <div className="w-full max-w-6xl my-6 p-6 border border-border rounded-md relative">
-              {children}
-              {!isAdmin && <ChatLauncher userId={user.uid} />}
-            </div>
-          </main>
+          {/* Client wrapper enables scroll navigation */}
+          <DashboardClientWrapper role={role}>
+            <main className="flex-1 overflow-auto p-4 flex justify-center">
+              <div className="w-full max-w-6xl my-6 p-6 border border-border rounded-md relative">
+                {children}
+                {!isAdmin && <ChatLauncher userId={user.uid} />}
+              </div>
+            </main>
+          </DashboardClientWrapper>
         </div>
       </div>
     </NextIntlClientProvider>

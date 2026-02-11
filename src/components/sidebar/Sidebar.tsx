@@ -1,5 +1,7 @@
 "use client";
 
+//src/components/sidebar/Sidebar.tsx
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "motion/react";
 import SidebarNav from "./SidebarNav";
