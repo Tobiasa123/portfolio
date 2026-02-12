@@ -41,6 +41,11 @@ export function useScrollNavigation(role: string) {
       }, 500);
     };
 
+    // -----------------------------
+    // SCROLL LOGIC (COMMENTED OUT)
+    // -----------------------------
+
+    /*
     const getScrollContainer = () => {
       return document.querySelector('main.overflow-auto') as HTMLElement;
     };
@@ -58,22 +63,19 @@ export function useScrollNavigation(role: string) {
       return document.documentElement.scrollHeight - window.scrollY - window.innerHeight <= 10;
     };
 
-    // Check if the event originated from within a scrollable widget/modal
     const isScrollingInWidget = (target: EventTarget | null): boolean => {
       if (!target || !(target instanceof Element)) return false;
-      
-      // Check if scrolling within chat widget or any overflow container
+
       const scrollableParent = (target as Element).closest('.overflow-y-auto, .overflow-auto');
       if (scrollableParent) {
         const mainContainer = getScrollContainer();
         return scrollableParent !== mainContainer;
       }
-      
+
       return false;
     };
 
     const onWheel = (e: WheelEvent) => {
-      // Ignore if scrolling inside a widget
       if (isScrollingInWidget(e.target)) return;
 
       if (e.deltaY > 0 && isAtBottom()) {
@@ -84,30 +86,35 @@ export function useScrollNavigation(role: string) {
         onNavigate(-1);
       }
     };
+    */
+
+    // -----------------------------
+    // KEYBOARD NAVIGATION (ACTIVE)
+    // -----------------------------
 
     const onKeyDown = (e: KeyboardEvent) => {
-      // Ignore if focus is inside a widget or input
-      if (isScrollingInWidget(e.target)) return;
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        (e.target as HTMLElement)?.isContentEditable
+      ) {
+        return;
+      }
 
       if (e.key === "ArrowDown" || e.key === "PageDown") {
-        if (isAtBottom()) {
-          e.preventDefault();
-          onNavigate(1);
-        }
+        e.preventDefault();
+        onNavigate(1);
       } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-        if (isAtTop()) {
-          e.preventDefault();
-          onNavigate(-1);
-        }
+        e.preventDefault();
+        onNavigate(-1);
       }
     };
 
-    window.addEventListener("wheel", onWheel, { passive: false });
+    // window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      window.removeEventListener("wheel", onWheel);
+      // window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [pathname, filteredItems, router]);

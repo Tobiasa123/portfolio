@@ -47,9 +47,9 @@ export default function TechstackPage() {
   const isVisible = (id: string) => visibleSections.has(id);
 
   return (
-    <div className="flex flex-col space-y-32 min-h-screen pb-32">
+    <div className="flex flex-col space-y-32 min-h-screen  border border-border">
       {/* Header */}
-      <div className="flex flex-col items-center space-y-4 py-16">
+      <div className="flex flex-col items-center space-y-4">
         <h1 className="text-4xl md:text-5xl font-bold text-center bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
           {t("title")}
         </h1>
