@@ -41,7 +41,7 @@ export default async function DashboardLayout({ children, params }: DashboardLay
           {/* Client wrapper enables scroll navigation */}
           <DashboardClientWrapper role={role}>
             <main className="flex-1 overflow-auto p-4 flex justify-center">
-              <div className="w-full max-w-6xl my-6 p-6 border border-border rounded-md relative">
+              <div className="w-full max-w-6xl my-6 p-6  rounded-md relative">
                 {children}
                 {!isAdmin && <ChatLauncher userId={user.uid} />}
               </div>
