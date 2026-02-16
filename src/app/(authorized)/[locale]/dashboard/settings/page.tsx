@@ -2,7 +2,7 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div>Temp setting page</div>
+    <div className='border border-border rounded-md h-full w-full'>Temp setting page</div>
   )
 }
 
