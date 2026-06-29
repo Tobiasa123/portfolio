@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 
     const userId = decoded.uid;
 
-    const isLimited = await checkRateLimit(`user:${userId}`, 20, 60);
+    const isLimited = await checkRateLimit(`user:${userId}`, 2, 30);
     if (isLimited) {
       return NextResponse.json(
         { error: "You're sending messages too quickly. Please wait a moment." },

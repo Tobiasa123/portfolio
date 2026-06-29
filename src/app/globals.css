@@ -29,6 +29,28 @@
     rgb(255, 0, 0) 0%,
     rgb(200, 0, 50) 100%
   );
+
+  /* ─── Portfolio palette (light) ─────────────────────────────────────────── */
+  /* Base backgrounds */
+  --portfolio-base:        250 250 255;   /* near-white with a cool tint      */
+  --portfolio-surface:     240 240 250;   /* slightly deeper card surface      */
+  --portfolio-surface-2:   230 230 245;   /* hover / deeper card               */
+
+  /* Text */
+  --portfolio-text:        15 15 30;      /* near-black, cooler than pure #000 */
+  --portfolio-text-muted:  90 90 120;     /* secondary text                    */
+  --portfolio-text-faint:  160 160 190;   /* tertiary / placeholders           */
+
+  /* Brand — indigo */
+  --portfolio-brand:       99 102 241;    /* indigo-500                        */
+  --portfolio-brand-muted: 99 102 241;    /* same hue, used at low opacity     */
+
+  /* Borders */
+  --portfolio-border:      210 210 230;   /* subtle cool border                */
+  --portfolio-border-brand: 99 102 241;  /* indigo border                     */
+
+  /* Glow (used in box-shadow / filter) */
+  --portfolio-glow: rgba(99, 102, 241, 0.15);
 }
 
 .dark {
@@ -55,6 +77,23 @@
     rgba(10, 10, 10, 0.95) 0%,
     rgba(180, 0, 120, 0.25) 100%
   );
+
+  /* ─── Portfolio palette (dark) ──────────────────────────────────────────── */
+  --portfolio-base:        10 10 15;      /* #0A0A0F                           */
+  --portfolio-surface:     19 19 32;      /* #131320                           */
+  --portfolio-surface-2:   26 26 46;      /* slightly lighter card hover       */
+
+  --portfolio-text:        245 245 240;   /* #F5F5F0                           */
+  --portfolio-text-muted:  245 245 240;   /* same, used at /60 opacity         */
+  --portfolio-text-faint:  245 245 240;   /* same, used at /35 opacity         */
+
+  --portfolio-brand:       99 102 241;    /* indigo-500 — same in both modes   */
+  --portfolio-brand-muted: 99 102 241;
+
+  --portfolio-border:      255 255 255;   /* used at /[0.07] opacity           */
+  --portfolio-border-brand: 99 102 241;
+
+  --portfolio-glow: rgba(99, 102, 241, 0.18);
 }
 
 body {
@@ -63,6 +102,7 @@ body {
   color: rgb(var(--foreground));
 }
 
+/* ─── Existing utility classes ──────────────────────────────────────────────── */
 
 .bg-bg { background-color: rgb(var(--background)); }
 .text-fg { color: rgb(var(--foreground)); }
@@ -87,7 +127,6 @@ body {
 /* Gradients */
 .bg-gradient-primary { background: var(--gradient-primary); }
 .bg-gradient-accent { background: var(--gradient-accent); }
-
 
 .glass-card {
   background-color: var(--glass-bg);
@@ -123,3 +162,17 @@ body {
 .shape-divider-top .shape-fill {
   fill: rgb(var(--background));
 }
+
+/* ─── Portfolio semantic utilities ──────────────────────────────────────────── */
+
+.portfolio-base       { background-color: rgb(var(--portfolio-base)); }
+.portfolio-surface    { background-color: rgb(var(--portfolio-surface)); }
+.portfolio-surface-2  { background-color: rgb(var(--portfolio-surface-2)); }
+
+.portfolio-text       { color: rgb(var(--portfolio-text)); }
+.portfolio-text-muted { color: rgb(var(--portfolio-text-muted) / 0.6); }
+.portfolio-text-faint { color: rgb(var(--portfolio-text-faint) / 0.35); }
+
+.portfolio-brand      { color: rgb(var(--portfolio-brand)); }
+.portfolio-border     { border-color: rgb(var(--portfolio-border) / 0.07); }
+.portfolio-border-brand { border-color: rgb(var(--portfolio-border-brand) / 0.25); }

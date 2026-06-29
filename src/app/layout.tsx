@@ -1,3 +1,4 @@
+// @ts-ignore: CSS module import for global stylesheet
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 

@@ -4,7 +4,6 @@ import ChatLauncher from "@/components/ChatLauncher";
 import { requireAuth } from "@/lib/auth";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import "../../../globals.css";
 import { Header } from "@/components/Header";
 import DashboardClientWrapper from "./DashboardClientWrapper";
 

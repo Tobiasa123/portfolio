@@ -2,7 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Header } from '@/components/Header';
 import { requireAuth } from '@/lib/auth';
-import '../../globals.css';
+
 
 interface PublicLayoutProps {
   children: React.ReactNode;
