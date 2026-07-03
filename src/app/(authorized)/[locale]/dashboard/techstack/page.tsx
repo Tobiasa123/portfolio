@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { TechItem } from "@/components/TechItem";
-import { AnimatedSection } from "@/components/ui/AnimatedSection";
 
 import {
   SiReact,
@@ -16,86 +16,105 @@ import {
   SiVercel,
 } from "react-icons/si";
 
+const expo: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const categories = [
+  {
+    id: "frontend",
+    title: "Frontend",
+    description: "Beautiful, responsive user interfaces",
+    items: [
+      { icon: SiReact, label: "React", color: "text-blue-500" },
+      { icon: SiNextdotjs, label: "Next.js" },
+      { icon: SiTailwindcss, label: "Tailwind", color: "text-teal-400" },
+    ],
+  },
+  {
+    id: "backend",
+    title: "Backend",
+    description: "Robust server-side architecture",
+    items: [
+      { icon: SiNodedotjs, label: "Node.js", color: "text-green-600" },
+      { icon: SiExpress, label: "Express", color: "text-gray-700" },
+      { icon: SiFirebase, label: "Firebase", color: "text-yellow-500" },
+    ],
+  },
+  {
+    id: "tools",
+    title: "Tools",
+    description: "Developer workflow & deployment",
+    items: [
+      { icon: SiGit, label: "Git", color: "text-orange-600" },
+      { icon: SiDocker, label: "Docker", color: "text-blue-400" },
+      { icon: SiVercel, label: "Vercel" },
+    ],
+  },
+];
+
 export default function TechstackPage() {
   const t = useTranslations("techstack");
 
   return (
-    <div className="grid auto-rows-[100vh]">
-      
+    <motion.div
+      variants={stagger}
+      initial="hidden"
+      animate="visible"
+      className="w-full flex flex-col gap-16"
+    >
       {/* Header */}
-      <section className="grid text-center">
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-            {t("title")}
-          </h1>
-          <p className="text-surface-fg/70 max-w-2xl mx-auto">
-            The modern technologies powering this application
-          </p>
-        </div>
-      </section>
-
-      {/* Frontend */}
-      <AnimatedSection
-        id="frontend"
-        className="grid place-items-center text-center px-6"
+      <motion.div
+        variants={fadeUp}
+        transition={{ duration: 0.7, ease: expo }}
+        className="text-center flex flex-col gap-4"
       >
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bold">Frontend</h2>
-            <p className="text-surface-fg/60">
-              Beautiful, responsive user interfaces
-            </p>
-          </div>
+        <p className="text-xs font-semibold tracking-[0.2em] uppercase portfolio-brand">
+          Stack
+        </p>
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight portfolio-text">
+          {t("title")}
+        </h1>
+        <p className="portfolio-text-muted max-w-2xl mx-auto">
+          The modern technologies powering this application
+        </p>
+      </motion.div>
 
-          <div className="flex flex-wrap  justify-center gap-6 border border-border rounded-md p-6 bg-gradient-primary">
-            <TechItem icon={SiReact} label="React" color="text-blue-500" />
-            <TechItem icon={SiNextdotjs} label="Next.js" />
-            <TechItem icon={SiTailwindcss} label="Tailwind" color="text-teal-400" />
-          </div>
-        </div>
-      </AnimatedSection>
+      {/* Categories */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {categories.map((category) => (
+          <motion.div
+            key={category.id}
+            variants={fadeUp}
+            transition={{ duration: 0.7, ease: expo }}
+            className="flex flex-col gap-6 rounded-2xl border portfolio-border-brand portfolio-surface p-8"
+          >
+            <div className="flex flex-col gap-2">
+              <h2 className="text-xl font-bold portfolio-text">{category.title}</h2>
+              <p className="text-sm portfolio-text-muted">{category.description}</p>
+            </div>
 
-      {/* Backend */}
-      <AnimatedSection
-        id="backend"
-        className="grid place-items-center text-center px-6"
-      >
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bold">Backend</h2>
-            <p className="text-surface-fg/60">
-              Robust server-side architecture
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-6 border border-border rounded-md p-6 bg-gradient-primary">
-            <TechItem icon={SiNodedotjs} label="Node.js" color="text-green-600" />
-            <TechItem icon={SiExpress} label="Express" color="text-gray-700" />
-            <TechItem icon={SiFirebase} label="Firebase" color="text-yellow-500" />
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Tools */}
-      <AnimatedSection
-        id="tools"
-        className="grid place-items-center text-center px-6"
-      >
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bold">Tools</h2>
-            <p className="text-surface-fg/60">
-              Developer workflow & deployment
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-6 border border-border rounded-md p-6 bg-gradient-primary">
-            <TechItem icon={SiGit} label="Git" color="text-orange-600" />
-            <TechItem icon={SiDocker} label="Docker" color="text-blue-400" />
-            <TechItem icon={SiVercel} label="Vercel" />
-          </div>
-        </div>
-      </AnimatedSection>
-    </div>
+            <div className="flex flex-wrap justify-center gap-3">
+              {category.items.map((item) => (
+                <TechItem
+                  key={item.label}
+                  icon={item.icon}
+                  label={item.label}
+                  color={item.color}
+                />
+              ))}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
   );
 }

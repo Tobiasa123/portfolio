@@ -55,32 +55,71 @@ export default function Sidebar({ role }: SidebarProps) {
 
   if (!mounted) return null;
 
-  return (
-    <>
-      {isMobile && collapsed && <SidebarToggleButton collapsed onClick={handleToggle} />}
-      {isMobile && !collapsed && <div className="fixed inset-0 z-40 bg-black/50" onClick={handleToggle} />}
+return (
+  <>
+    {isMobile && collapsed && (
+      <SidebarToggleButton collapsed onClick={handleToggle} />
+    )}
 
-      <motion.aside
-        ref={sidebarRef}
-        role="navigation"
-        aria-label="Main navigation"
-        initial={false}
-        className={`
-          flex flex-col overflow-hidden border-r border-border bg-surface pointer-events-auto
-          ${isMobile ? "fixed left-0 top-0 z-50 h-screen" : "absolute left-0 top-0 h-full z-30"}
-        `}
-        onMouseEnter={e => { if (canHover && e.clientX <= SIDEBAR_COLLAPSED_WIDTH + 16) setIsHovered(true); }}
-        onMouseLeave={() => { if (canHover) setIsHovered(false); }}
-        animate={{
-          width: isMobile ? SIDEBAR_WIDTH : isExpanded ? SIDEBAR_WIDTH : SIDEBAR_COLLAPSED_WIDTH,
-          x: isMobile && collapsed ? -SIDEBAR_WIDTH : 0,
-        }}
-        transition={{ duration: 0.15, ease: "easeInOut" }}
-      >
-        {isMobile && <SidebarHeader collapsed={!isExpanded} onToggle={handleToggle} isMobile={isMobile} />}
-        <SidebarNav collapsed={!isExpanded} role={role} />
-        {isMobile && <SidebarFooter collapsed={!isExpanded} />}
-      </motion.aside>
-    </>
-  );
+    {isMobile && !collapsed && (
+      <div
+        className="fixed inset-0 z-40 bg-black/35 backdrop-blur-sm"
+        onClick={handleToggle}
+      />
+    )}
+
+    <motion.aside
+      ref={sidebarRef}
+      role="navigation"
+      aria-label="Main navigation"
+      initial={false}
+      className={`
+        flex flex-col overflow-hidden
+        border-r portfolio-border
+        portfolio-surface
+        pointer-events-auto
+        ${
+          isMobile
+            ? "fixed left-0 top-0 z-50 h-screen"
+            : "absolute left-0 top-0 h-full z-30"
+        }
+      `}
+      onMouseEnter={(e) => {
+        if (canHover && e.clientX <= SIDEBAR_COLLAPSED_WIDTH + 16) {
+          setIsHovered(true);
+        }
+      }}
+      onMouseLeave={() => {
+        if (canHover) {
+          setIsHovered(false);
+        }
+      }}
+      animate={{
+        width: isMobile
+          ? SIDEBAR_WIDTH
+          : isExpanded
+            ? SIDEBAR_WIDTH
+            : SIDEBAR_COLLAPSED_WIDTH,
+        x: isMobile && collapsed ? -SIDEBAR_WIDTH : 0,
+      }}
+      transition={{ duration: 0.15, ease: "easeInOut" }}
+    >
+      {isMobile && (
+        <SidebarHeader
+          collapsed={!isExpanded}
+          onToggle={handleToggle}
+          isMobile={isMobile}
+        />
+      )}
+
+        <SidebarNav
+    collapsed={!isExpanded}
+    role={role}
+    onNavigate={isMobile ? () => setCollapsed(true) : undefined}
+  />
+
+      {isMobile && <SidebarFooter collapsed={!isExpanded} />}
+    </motion.aside>
+  </>
+);
 }

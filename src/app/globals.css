@@ -31,26 +31,29 @@
   );
 
   /* ─── Portfolio palette (light) ─────────────────────────────────────────── */
-  /* Base backgrounds */
-  --portfolio-base:        250 250 255;   /* near-white with a cool tint      */
-  --portfolio-surface:     240 240 250;   /* slightly deeper card surface      */
-  --portfolio-surface-2:   230 230 245;   /* hover / deeper card               */
+  /* Base backgrounds — neutral warm-grey canvas, crisp white cards on top */
+  --portfolio-base:        250 250 251;   /* barely-there warm grey canvas     */
+  --portfolio-surface:     255 255 255;   /* pure white card, pops via shadow  */
+  --portfolio-surface-2:   244 244 247;   /* hover / pressed state             */
 
-  /* Text */
-  --portfolio-text:        15 15 30;      /* near-black, cooler than pure #000 */
-  --portfolio-text-muted:  90 90 120;     /* secondary text                    */
-  --portfolio-text-faint:  160 160 190;   /* tertiary / placeholders           */
+  /* Text — near-black with real weight, not washed-out grey */
+  --portfolio-text:        15 15 20;      /* crisp near-black                  */
+  --portfolio-text-muted:  82 82 96;      /* secondary, still readable at a glance */
+  --portfolio-text-faint:  148 148 163;   /* placeholders / tertiary           */
 
-  /* Brand — indigo */
-  --portfolio-brand:       99 102 241;    /* indigo-500                        */
-  --portfolio-brand-muted: 99 102 241;    /* same hue, used at low opacity     */
+  /* Brand — violet, deeper + more saturated for real presence on white */
+  --portfolio-brand:       109 40 217;    /* violet-700                        */
+  --portfolio-brand-muted: 124 58 237;    /* violet-600, used at low opacity   */
 
-  /* Borders */
-  --portfolio-border:      210 210 230;   /* subtle cool border                */
-  --portfolio-border-brand: 99 102 241;  /* indigo border                     */
+  /* Borders — crisp, not muddy */
+  --portfolio-border:      228 228 235;
+  --portfolio-border-brand: 109 40 217;
 
-  /* Glow (used in box-shadow / filter) */
-  --portfolio-glow: rgba(99, 102, 241, 0.15);
+  /* Glow */
+  --portfolio-glow: rgba(109, 40, 217, 0.16);
+
+  /* Layered shadow — the thing that actually makes light mode feel "designed" */
+  --portfolio-shadow: 0 1px 2px rgb(15 15 20 / 0.04), 0 4px 12px rgb(15 15 20 / 0.06), 0 16px 32px rgb(109 40 217 / 0.05);
 }
 
 .dark {
@@ -94,6 +97,8 @@
   --portfolio-border-brand: 99 102 241;
 
   --portfolio-glow: rgba(99, 102, 241, 0.18);
+
+  --portfolio-shadow: 0 1px 3px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.4);
 }
 
 body {
@@ -170,9 +175,11 @@ body {
 .portfolio-surface-2  { background-color: rgb(var(--portfolio-surface-2)); }
 
 .portfolio-text       { color: rgb(var(--portfolio-text)); }
-.portfolio-text-muted { color: rgb(var(--portfolio-text-muted) / 0.6); }
-.portfolio-text-faint { color: rgb(var(--portfolio-text-faint) / 0.35); }
+.portfolio-text-muted { color: rgb(var(--portfolio-text-muted) / 0.75); }
+.portfolio-text-faint { color: rgb(va r(--portfolio-text-faint) / 0.6); }
 
 .portfolio-brand      { color: rgb(var(--portfolio-brand)); }
-.portfolio-border     { border-color: rgb(var(--portfolio-border) / 0.07); }
+.portfolio-border     { border-color: rgb(var(--portfolio-border) / 0.6); }
 .portfolio-border-brand { border-color: rgb(var(--portfolio-border-brand) / 0.25); }
+
+.portfolio-shadow { box-shadow: var(--portfolio-shadow); }

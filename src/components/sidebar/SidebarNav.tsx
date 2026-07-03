@@ -9,9 +9,14 @@ import { navItems } from "@/app/config/routes";
 interface SidebarNavProps {
   collapsed: boolean;
   role: string;
+  onNavigate?: () => void;
 }
 
-export default function SidebarNav({ role, collapsed }: SidebarNavProps) {
+export default function SidebarNav({
+  role,
+  collapsed,
+  onNavigate,
+}: SidebarNavProps) {
   const pathname = usePathname();
   const t = useTranslations("sidebar");
   const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}/, "");
@@ -32,6 +37,7 @@ export default function SidebarNav({ role, collapsed }: SidebarNavProps) {
           <Link
             key={item.key}
             href={item.href}
+            onClick={onNavigate}
             className={clsx(
               "group relative flex items-center gap-3 rounded-base px-3 py-2 text-sm font-medium transition-colors",
               active
@@ -39,20 +45,19 @@ export default function SidebarNav({ role, collapsed }: SidebarNavProps) {
                 : "text-surface-fg hover:bg-surface-hover"
             )}
           >
-            {/* Icon (always visible) */}
             <Icon size={20} className="shrink-0" aria-hidden="true" />
 
-            {/* Label (expanded only) */}
             <span
               className={clsx(
                 "truncate transition-all duration-150",
-                collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"
+                collapsed
+                  ? "w-0 overflow-hidden opacity-0"
+                  : "w-auto opacity-100"
               )}
             >
               {t(item.key)}
             </span>
 
-            {/* Tooltip (collapsed only, desktop hover) */}
             {collapsed && (
               <span
                 className="

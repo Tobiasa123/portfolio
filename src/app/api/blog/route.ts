@@ -5,28 +5,42 @@ import { adminDb } from "@/lib/firebaseAdmin";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const limit = Number(searchParams.get("limit")) || 1;
+    const limit = Math.min(Number(searchParams.get("limit")) || 1, 50);
+    const cursor = searchParams.get("cursor"); // ISO string of the last post's createdAt
 
-    const snapshot = await adminDb
+    let query = adminDb
       .collection("blog")
       .orderBy("createdAt", "desc")
-      .limit(limit)
-      .get();
+      .limit(limit + 1); // fetch one extra so we know if there's a next page
 
-    if (snapshot.empty) {
-      return NextResponse.json([]);
+    if (cursor) {
+      const cursorDate = new Date(cursor);
+      if (!isNaN(cursorDate.getTime())) {
+        query = query.startAfter(cursorDate);
+      }
     }
 
-    const posts = snapshot.docs.map((doc) => {
+    const snapshot = await query.get();
+
+    if (snapshot.empty) {
+      return NextResponse.json({ posts: [], hasMore: false });
+    }
+
+    const docs = snapshot.docs;
+    const hasMore = docs.length > limit;
+    const pageDocs = hasMore ? docs.slice(0, limit) : docs;
+
+    const posts = pageDocs.map((doc) => {
       const data = doc.data();
       return {
         id: doc.id,
         ...data,
-        createdAt: data.createdAt?.toDate?.() ?? null,
+        createdAt: data.createdAt?.toDate?.()?.toISOString?.() ?? null,
+        updatedAt: data.updatedAt?.toDate?.()?.toISOString?.() ?? null,
       };
     });
 
-    return NextResponse.json(posts);
+    return NextResponse.json({ posts, hasMore });
   } catch (err) {
     console.error("GET /api/blog error:", err);
     return new NextResponse("Internal Server Error", { status: 500 });

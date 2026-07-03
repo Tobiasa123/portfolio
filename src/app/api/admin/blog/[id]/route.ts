@@ -1,3 +1,4 @@
+//src/app/api/admin/blog/[id]/route.ts
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebaseAdmin";
 import { requireRole } from "@/lib/auth";
@@ -9,7 +10,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;       // <-- FIX
+    const { id } = await params;
     if (!id) return new NextResponse("Bad Request", { status: 400 });
 
     const ref = await adminDb.collection("blog").doc(id).get();
@@ -31,18 +32,24 @@ export async function PUT(
     const admin = await requireRole("admin");
     if (!admin) return new NextResponse("Unauthorized", { status: 401 });
 
-    const { id } = await params;      
+    const { id } = await params;
     if (!id) return new NextResponse("Bad Request", { status: 400 });
+
+    const docRef = adminDb.collection("blog").doc(id);
+    const existing = await docRef.get();
+    if (!existing.exists) return new NextResponse("Not Found", { status: 404 });
 
     const body = await req.json();
     const validated = blogPostSchema.partial().parse(body);
 
-    await adminDb.collection("blog").doc(id).update({
+    await docRef.update({
       ...validated,
       updatedAt: new Date(),
     });
 
-    return NextResponse.json({ id, ...validated });
+    // Return the full, current document — not just the partial fields sent in
+    const updated = await docRef.get();
+    return NextResponse.json({ id, ...updated.data() });
   } catch (err) {
     console.error("PUT /api/admin/blog/[id]:", err);
     return new NextResponse("Internal Error", { status: 500 });
@@ -58,7 +65,7 @@ export async function DELETE(
     const admin = await requireRole("admin");
     if (!admin) return new NextResponse("Unauthorized", { status: 401 });
 
-    const { id } = await params;     
+    const { id } = await params;
     if (!id) return new NextResponse("Bad Request", { status: 400 });
 
     await adminDb.collection("blog").doc(id).delete();

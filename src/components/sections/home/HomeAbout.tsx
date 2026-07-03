@@ -14,7 +14,7 @@ export function HomeAbout() {
       initial="hidden"
       whileInView="visible"
       viewport={viewportOnce}
-      className="min-h-screen flex items-center px-6 md:px-16 py-24 border-b portfolio-border"
+      className="min-h-screen flex items-center px-6 md:px-16 py-24 border-b portfolio-border-brand"
     >
       <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <motion.div

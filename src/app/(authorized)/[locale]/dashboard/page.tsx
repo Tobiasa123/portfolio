@@ -7,7 +7,7 @@ export default function DashboardPage() {
   const t = useTranslations("home");
 
   return (
-    <div className="text-center border border-border rounded-md h-full w-full">
+    <div className="text-center rounded-md h-full w-full">
       {/* Animate heading */}
       <motion.h1
         className="text-3xl font-bold"

@@ -24,7 +24,7 @@ export default async function DashboardLayout({ children, params }: DashboardLay
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <div className="h-screen flex flex-col bg-bg text-fg">
+      <div className="h-screen flex flex-col portfolio-base portfolio-text">
         <Header user={user} />
 
         <div className="flex flex-1 overflow-hidden">
@@ -40,7 +40,7 @@ export default async function DashboardLayout({ children, params }: DashboardLay
           {/* Client wrapper enables scroll navigation */}
           <DashboardClientWrapper role={role}>
             <main className="flex-1 overflow-auto p-4 flex justify-center">
-              <div className="w-full max-w-6xl my-6 p-6  rounded-md relative">
+              <div className="w-full max-w-6xl my-6 p-6 rounded-md relative portfolio-surface border portfolio-border-brand ">
                 {children}
                 {!isAdmin && <ChatLauncher userId={user.uid} />}
               </div>

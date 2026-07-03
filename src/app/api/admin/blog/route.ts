@@ -3,7 +3,7 @@
 import { requireRole } from "@/lib/auth";
 import { blogPostSchema } from "@/schemas/blogPost";
 import { NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebaseAdmin"; 
+import { adminDb } from "@/lib/firebaseAdmin";
 
 // ------------ GET (Public) ------------ //
 
@@ -37,19 +37,22 @@ export async function POST(req: Request) {
     const body = await req.json();
     const validated = blogPostSchema.parse(body);
 
-    // Create new entry with server-side timestamp
+    // Create new entry with server-side timestamps
+    const now = new Date();
     const newPostRef = await adminDb.collection("blog").add({
       title: validated.title,
       content: validated.content,
       author: validated.author ?? "Admin",
-      createdAt: new Date(),
+      createdAt: now,
+      updatedAt: now,
     });
 
     return NextResponse.json(
       {
         id: newPostRef.id,
         ...validated,
-        createdAt: new Date(),
+        createdAt: now,
+        updatedAt: now,
       },
       { status: 201 }
     );

@@ -14,7 +14,7 @@ export function HomeStack() {
       initial="hidden"
       whileInView="visible"
       viewport={viewportOnce}
-      className="flex items-center justify-center px-6 md:px-16 py-28 text-center border-b portfolio-border"
+      className="flex items-center justify-center px-6 md:px-16 py-28 text-center border-b portfolio-border-brand"
     >
       <div className="max-w-2xl">
         <motion.p

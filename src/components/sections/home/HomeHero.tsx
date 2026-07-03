@@ -21,7 +21,7 @@ export function HomeHero() {
   return (
     <section
       ref={heroRef}
-      className="relative min-h-screen flex items-center px-6 md:px-16 overflow-hidden border-b portfolio-border"
+      className="relative min-h-screen flex items-center px-6 md:px-16 overflow-hidden border-b portfolio-border-brand"
     >
       <motion.div
         aria-hidden

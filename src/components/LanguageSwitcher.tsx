@@ -53,8 +53,8 @@ export function LanguageSwitcher({ small = false, fullWidth = false }: LanguageS
         className={`
           ${widthClass} ${heightClass} ${paddingClass}
           flex items-center justify-center gap-2
-          rounded-base border border-border
-          bg-surface text-surface-fg text-sm
+          rounded-base border portfolio-border-brand
+          portfolio-surface portfolio-text text-sm
           transition-all duration-150
         `}
         aria-label="Change language"
@@ -73,8 +73,8 @@ export function LanguageSwitcher({ small = false, fullWidth = false }: LanguageS
         <div
           className="
             absolute right-0 mt-2 min-w-35
-            rounded-base border border-border
-            bg-surface shadow-lg
+            rounded-base border portfolio-border-brand
+            portfolio-surface shadow-lg
             overflow-hidden z-50
           "
         >
@@ -88,7 +88,8 @@ export function LanguageSwitcher({ small = false, fullWidth = false }: LanguageS
               }}
               className={`
                 w-full px-3 py-2 text-left text-sm
-                hover:bg-surface/80
+                portfolio-text
+                hover:portfolio-surface-2
                 ${code === locale ? "font-medium" : ""}
               `}
             >

@@ -14,7 +14,7 @@ export function HomeProjects() {
       initial="hidden"
       whileInView="visible"
       viewport={viewportOnce}
-      className="min-h-screen flex items-center px-6 md:px-16 py-24 border-b portfolio-border"
+      className="min-h-screen flex items-center px-6 md:px-16 py-24 border-b portfolio-border-brand"
     >
       <div className="w-full max-w-6xl mx-auto">
         <motion.p
@@ -49,7 +49,7 @@ export function HomeProjects() {
               }}
               transition={{ duration: 0.65, ease: expo }}
               whileHover={{ y: -6, transition: { duration: 0.25, ease: smooth } }}
-              className="group flex flex-col gap-3 p-7 rounded-2xl portfolio-surface border portfolio-border transition-colors duration-200 hover:portfolio-border-brand cursor-default"
+              className="group flex flex-col gap-3 p-7 rounded-2xl portfolio-surface border portfolio-border-brand transition-colors duration-200 hover:portfolio-border-brand cursor-default"
             >
               <h3 className="text-lg font-semibold portfolio-text">{p.title}</h3>
               <p className="text-sm leading-relaxed portfolio-text-muted flex-1">{p.description}</p>

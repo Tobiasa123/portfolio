@@ -6,11 +6,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { Button } from "@/components/Button";
 import { signInWithEmailAndPassword, GithubAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { SiGithub } from "react-icons/si";
-import { GlassCard } from "./ui/GlassCard";
+import { expo, stagger, fadeUp } from "@/components/sections/home/motion";
 
 interface AuthFormProps {
   type: "login" | "register";
@@ -18,8 +19,8 @@ interface AuthFormProps {
 }
 
 export function AuthForm({ type, redirectTo }: AuthFormProps) {
-  const tPublic = useTranslations("public");       
-  const tAuth = useTranslations("public.auth");   
+  const tPublic = useTranslations("public");
+  const tAuth = useTranslations("public.auth");
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -94,38 +95,75 @@ export function AuthForm({ type, redirectTo }: AuthFormProps) {
   };
 
   return (
-    <div className="h-full flex items-center justify-center bg-gradient-primary">
-      <GlassCard className="flex flex-col gap-4 w-96">
+    <div
+      className="relative h-full flex items-center justify-center overflow-hidden px-6"
+      style={{
+        background:
+          "linear-gradient(135deg, rgb(var(--portfolio-base)) 0%, rgb(var(--portfolio-surface)) 100%)",
+      }}
+    >
+      {/* Brand glow, same treatment as HomeHero */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-[10%] top-1/2 -translate-y-1/2 size-120 rounded-full blur-3xl"
+        style={{
+          background: "radial-gradient(circle, var(--portfolio-glow) 0%, transparent 70%)",
+        }}
+      />
+
+      <motion.div
+        variants={stagger}
+        initial="hidden"
+        animate="visible"
+        className="relative w-full max-w-96 flex flex-col gap-6 rounded-2xl border portfolio-border-brand portfolio-surface backdrop-blur-md p-8"
+      >
         {/* Form Title */}
-        <h1 className="text-2xl font-semibold text-fg text-center">
+        <motion.h1
+          variants={fadeUp}
+          transition={{ duration: 0.7, ease: expo }}
+          className="text-3xl md:text-4xl font-bold tracking-tight text-center"
+        >
           {type === "login" ? tPublic("login") : tPublic("signup")}
-        </h1>
+        </motion.h1>
 
         {/* Form Fields */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <motion.form
+          variants={fadeUp}
+          transition={{ duration: 0.7, ease: expo }}
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4"
+        >
           <input
             type="email"
-            name="email"                        
-            autoComplete="email"                
+            name="email"
+            autoComplete="email"
             placeholder={tAuth("email")}
             title={tAuth("email")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground bg-white/10 dark:bg-black/20"
+            className="w-full rounded-xl border portfolio-border bg-transparent px-4 py-2.5 text-sm portfolio-text-muted focus:outline-none focus:ring-2 focus:ring-[rgb(var(--portfolio-brand-muted)/0.5)] transition-colors"
           />
 
           <input
             type="password"
-            name="password"                     // required for browser autofill
-            autoComplete={type === "login" ? "current-password" : "new-password"} // autofill
+            name="password"
+            autoComplete={type === "login" ? "current-password" : "new-password"}
             placeholder={tAuth("password")}
             title={tAuth("password")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-border rounded-base p-2 focus:outline-none focus:ring-2 focus:ring-surface-foreground bg-white/10 dark:bg-black/20"
+            className="w-full rounded-xl border portfolio-border bg-transparent px-4 py-2.5 text-sm portfolio-text-muted focus:outline-none focus:ring-2 focus:ring-[rgb(var(--portfolio-brand-muted)/0.5)] transition-colors"
           />
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && (
+            <motion.p
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-red-500 text-sm text-center"
+            >
+              {error}
+            </motion.p>
+          )}
 
           <Button type="submit" disabled={loading}>
             {loading
@@ -136,28 +174,34 @@ export function AuthForm({ type, redirectTo }: AuthFormProps) {
               ? tPublic("login")
               : tPublic("signup")}
           </Button>
-        </form>
+        </motion.form>
 
         {/* GitHub OAuth */}
-        <Button
-          onClick={handleGithubSignIn}
-          disabled={loading}
-          className="flex items-center justify-center gap-2 bg-black text-white hover:brightness-90"
-        >
-          <SiGithub />
-          {tAuth("continueWithGithub")}
-        </Button>
+        <motion.div variants={fadeUp} transition={{ duration: 0.7, ease: expo }}>
+          <Button
+            onClick={handleGithubSignIn}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 rounded-xl border portfolio-border-brand portfolio-surface hover:brightness-95 transition"
+          >
+            <SiGithub />
+            {tAuth("continueWithGithub")}
+          </Button>
+        </motion.div>
 
         {/* Bottom Link */}
-        <div className="text-center mt-2">
+        <motion.div
+          variants={fadeUp}
+          transition={{ duration: 0.6, ease: expo }}
+          className="text-center"
+        >
           <Link
             href={type === "login" ? "/register" : "/login"}
-            className="text-sm text-surface-foreground hover:underline"
+            className="text-sm portfolio-brand hover:underline"
           >
             {type === "login" ? tAuth("notRegistered") : tAuth("alreadyRegistered")}
           </Link>
-        </div>
-      </GlassCard>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

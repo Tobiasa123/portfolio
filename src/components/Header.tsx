@@ -26,7 +26,8 @@ export function Header({ user }: HeaderProps) {
   // Public header (no user)
   if (!user) {
     return (
-      <header className="relative w-full border-b portfolio-border portfolio-base p-4">
+      // Public header (no user)
+      <header className="fixed top-0 left-0 right-0 z-50 border-b portfolio-border portfolio-base p-4">
         <div className="flex items-center justify-between h-full">
           <Link href="/" className="text-lg font-semibold portfolio-text">
             {t("logo")}

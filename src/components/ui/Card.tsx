@@ -13,12 +13,12 @@ export function Card({ children, className = "" }: CardProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ 
+      transition={{
         type: "spring",
         stiffness: 300,
-        damping: 20
+        damping: 20,
       }}
-      className={`card ${className}`}
+      className={`rounded-base border portfolio-border-brand portfolio-surface-2 ${className}`}
     >
       {children}
     </motion.div>

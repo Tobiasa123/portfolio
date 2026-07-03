@@ -28,9 +28,10 @@ export default function ThemeToggle({ small = false, fullWidth = false }: ThemeT
       className={`
         ${widthClass} ${heightClass} ${paddingClass}
         flex items-center justify-center
-        rounded-base border border-border
-        bg-surface text-surface-fg
+        rounded-base border portfolio-border-brand
+        portfolio-surface portfolio-text
         transition-all duration-150
+        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[rgb(var(--portfolio-brand-muted)/0.5)]
       `}
       aria-label="Toggle Theme"
     >

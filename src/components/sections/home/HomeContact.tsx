@@ -14,7 +14,7 @@ export function HomeContact() {
       initial="hidden"
       whileInView="visible"
       viewport={viewportOnce}
-      className="min-h-screen flex items-center justify-center px-6 md:px-16 py-24 border-b portfolio-border"
+      className="min-h-screen flex items-center justify-center px-6 md:px-16 py-24 border-b portfolio-border-"
     >
       <motion.div
         variants={fadeUp}
@@ -41,7 +41,7 @@ export function HomeContact() {
             transition={{ duration: 0.5, ease: expo, delay: 0.1 + i * 0.07 }}
             type={f.type}
             placeholder={f.placeholder}
-            className="w-full px-4 py-3.5 mb-3 rounded-xl portfolio-surface border portfolio-border portfolio-text placeholder:portfolio-text-faint text-sm outline-none focus:portfolio-border-brand transition-colors"
+            className="w-full px-4 py-3.5 mb-3 rounded-xl portfolio-surface border portfolio-border-brand portfolio-text placeholder:portfolio-text-faint text-sm outline-none focus:portfolio-border-brand transition-colors"
           />
         ))}
 
@@ -52,7 +52,7 @@ export function HomeContact() {
           transition={{ duration: 0.5, ease: expo, delay: 0.24 }}
           placeholder={t("contact.messagePlaceholder")}
           rows={5}
-          className="w-full px-4 py-3.5 mb-5 rounded-xl portfolio-surface border portfolio-border portfolio-text placeholder:portfolio-text-faint text-sm outline-none focus:portfolio-border-brand transition-colors resize-vertical font-sans"
+          className="w-full px-4 py-3.5 mb-5 rounded-xl portfolio-surface border portfolio-border-brand portfolio-text placeholder:portfolio-text-faint text-sm outline-none focus:portfolio-border-brand transition-colors resize-vertical font-sans"
         />
 
         <motion.div
